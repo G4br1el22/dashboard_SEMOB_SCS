@@ -48,6 +48,8 @@ O foco técnico do projeto está na **automação e consumo de dados brutos** do
 | Larissa Barbosa Oliveira                | 25.11765-6   | @larringe              | Dev. e Documentação               |
 
 
+```text
+
 ##Arquitetura do repositório
 /dashboard-operacao-transporte
 │
@@ -96,3 +98,6 @@ O foco técnico do projeto está na **automação e consumo de dados brutos** do
     └── /assets
         ├── /icons              # Ícones customizados da sidebar e dos cards
         └── /fonts              # Fontes específicas utilizadas no design
+
+
+'''

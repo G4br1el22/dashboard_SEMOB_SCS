@@ -1,0 +1,177 @@
+# -----------------------------------------------------------------------------
+# Dados da SEMOB e materiais restritos
+# -----------------------------------------------------------------------------
+bd/
+data/
+dados/
+datasets/
+raw_data/
+private/
+restricted/
+confidential/
+relatorios/
+reports/
+exports/
+uploads/
+
+# Documentacao e materiais de reuniao
+documentacao/
+documentos/
+docs/
+atas/
+reunioes/
+transcricoes/
+*.doc
+*.docx
+*.pdf
+*.ppt
+*.pptx
+*.xls
+*.xlsx
+*.odt
+*.ods
+*.odp
+
+# Gravacoes e outros materiais brutos de reuniao
+*.mp3
+*.m4a
+*.wav
+*.aac
+*.mp4
+*.mov
+*.mkv
+
+# Formatos comuns de bases e exportacoes
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.avro
+*.ndjson
+*.jsonl
+
+# Padroes dos relatorios operacionais recebidos
+*Mensal*.html
+*Quinzenal*.html
+Passageiros*.html
+Saldos*.html
+
+# Arquivos compactados e pacotes de dados
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.bz2
+*.xz
+
+# -----------------------------------------------------------------------------
+# Credenciais, chaves e configuracoes locais
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+secrets/
+credentials/
+*.secret
+*.secrets
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*service-account*.json
+*service_account*.json
+credentials*.json
+google-services.json
+GoogleService-Info.plist
+
+# -----------------------------------------------------------------------------
+# Bancos locais, dumps, backups e arquivos temporarios
+# -----------------------------------------------------------------------------
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sql
+*.dump
+*.bson
+*.bak
+*.backup
+*.old
+*.orig
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Logs e resultados de cobertura/testes
+*.log
+logs/
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# -----------------------------------------------------------------------------
+# Python
+# -----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.python-version
+
+# -----------------------------------------------------------------------------
+# Flutter e Dart
+# -----------------------------------------------------------------------------
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+flutter_export_environment.sh
+Generated.xcconfig
+ephemeral/
+
+# Android
+android/.gradle/
+android/local.properties
+android/key.properties
+android/app/upload-keystore.jks
+android/app/*.keystore
+android/app/*.jks
+
+# iOS e macOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+macos/Pods/
+macos/.symlinks/
+macos/Flutter/ephemeral/
+
+# -----------------------------------------------------------------------------
+# Editores e sistema operacional
+# -----------------------------------------------------------------------------
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini

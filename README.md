@@ -46,6 +46,7 @@ O foco técnico do projeto está na **automação e consumo de dados brutos** do
 | Rebecca Miki Uema               | 25.01550-4   | @rebeccauema       | Dev. e Documentação               |
 | Gabriel Medeiros Araujo             | 25.11742-5   | @G4br1el22          | Dev. e Documentação               |
 | Larissa Barbosa Oliveira                | 25.11765-6   | @larringe              | Dev. e Documentação               |
+| Guilherme Nunes Furtado          | 25.00014-2   | @Gnune2             | Dev. e Documentação               |
 
 
 ```text

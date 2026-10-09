@@ -1,0 +1,26 @@
+name: dashboard_transporte
+description: Dashboard de Operação de Transporte - SEMOB-SCS (TTI206)
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  fl_chart: ^0.69.0
+  google_fonts: ^6.2.1
+  intl: ^0.20.3
+  # Quando o back existir:
+  # dio: ^5.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

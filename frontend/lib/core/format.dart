@@ -43,3 +43,12 @@ String fmtSubtitulo(DateTime inicio, DateTime fim, Periodo periodo) {
   };
   return '${f.format(inicio)} a ${f.format(fim)}$sufixo';
 }
+
+/// Escolhe um intervalo "redondo" de forma que o eixo Y tenha até 5 divisões.
+double intervaloEixo(double maxValor) {
+  const passos = [1000, 2000, 3000, 5000, 10000, 20000, 25000, 50000, 100000, 200000, 500000, 1000000];
+  for (final p in passos) {
+    if (maxValor / p <= 5) return p.toDouble();
+  }
+  return 1000000;
+}

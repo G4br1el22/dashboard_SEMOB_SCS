@@ -15,19 +15,10 @@ class BarChartDemanda extends StatelessWidget {
   static const double _leftSize = 44;
   static const double _bottomSize = 28;
 
-  /// Escolhe um intervalo "redondo" de forma que o eixo tenha até 5 divisões.
-  static double _intervalo(double maxValor) {
-    const passos = [1000, 2000, 3000, 5000, 10000, 20000, 25000, 50000, 100000, 200000, 500000, 1000000];
-    for (final p in passos) {
-      if (maxValor / p <= 5) return p.toDouble();
-    }
-    return 1000000;
-  }
-
   @override
   Widget build(BuildContext context) {
     final maxValor = pontos.fold<double>(0, (a, p) => max(a, p.total));
-    final intervalo = _intervalo(maxValor);
+    final intervalo = intervaloEixo(maxValor);
     final maxY = max(intervalo, (maxValor / intervalo).ceil() * intervalo);
     final porHora = granularidade == Granularidade.hora;
 

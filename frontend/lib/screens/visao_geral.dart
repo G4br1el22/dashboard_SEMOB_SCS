@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../models/chart_data.dart';
 import '../models/visao_geral_data.dart';
 import '../repositories/visao_geral_repository.dart';
 import '../widgets/bar_chart_demanda.dart';
 import '../widgets/donut_chart_comp.dart';
+import '../widgets/grafico_financeiro.dart';
 import '../widgets/kpi_grid.dart';
+import '../widgets/tabela_linhas.dart';
 import '../widgets/tela_com_filtros.dart';
 
 class VisaoGeralScreen extends StatelessWidget {
@@ -29,43 +32,43 @@ class VisaoGeralScreen extends StatelessWidget {
       titulo: 'Dashboard de Operação de Transporte',
       carregar: repo.carregar,
       intervalo: (d) => (d.dataInicio, d.dataFim),
-      alturaMinimaLargo: 840,
-      corpoLargo: _corpoLargo,
-      corpoEmpilhado: _corpoEmpilhado,
+      corpoRolavel: _corpo,
     );
   }
 
-  Widget _corpoLargo(VisaoGeralData d) {
+  Widget _corpo(VisaoGeralData d, bool largo) {
+    final demanda = BarChartDemanda(pontos: d.serie, granularidade: d.granularidade);
+    final composicao = DonutChartComp(pagantes: d.pagantes.valor, naoPagantes: d.naoPagantes.valor);
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         KpiGrid(kpis: d.kpis, icones: _icones),
         const SizedBox(height: 22),
-        Expanded(
-          child: Row(
-            children: [
-              Expanded(flex: 2, child: BarChartDemanda(pontos: d.serie, granularidade: d.granularidade)),
-              const SizedBox(width: 22),
-              Expanded(
-                child: DonutChartComp(pagantes: d.pagantes.valor, naoPagantes: d.naoPagantes.valor),
-              ),
-            ],
-          ),
+        if (largo)
+          SizedBox(
+            height: 400,
+            child: Row(
+              children: [
+                Expanded(flex: 2, child: demanda),
+                const SizedBox(width: 22),
+                Expanded(child: composicao),
+              ],
+            ),
+          )
+        else ...[
+          SizedBox(height: 400, child: demanda),
+          const SizedBox(height: 16),
+          SizedBox(height: 420, child: composicao),
+        ],
+        SizedBox(height: largo ? 22 : 16),
+        GraficoFinanceiro(
+          pontos: d.financeiro,
+          receitaTotal: d.receita.valor,
+          custoTotal: d.custo.valor,
         ),
-      ],
-    );
-  }
-
-  Widget _corpoEmpilhado(VisaoGeralData d) {
-    return Column(
-      children: [
-        KpiGrid(kpis: d.kpis, icones: _icones),
-        const SizedBox(height: 16),
-        SizedBox(height: 400, child: BarChartDemanda(pontos: d.serie, granularidade: d.granularidade)),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 420,
-          child: DonutChartComp(pagantes: d.pagantes.valor, naoPagantes: d.naoPagantes.valor),
-        ),
+        SizedBox(height: largo ? 22 : 16),
+        TabelaLinhas(linhas: d.linhas, diario: d.granularidade == Granularidade.hora),
       ],
     );
   }

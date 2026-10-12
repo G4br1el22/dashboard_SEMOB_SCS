@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -6,20 +8,28 @@ import '../core/theme.dart';
 import '../models/chart_data.dart';
 
 class BarChartDemanda extends StatelessWidget {
-  final List<FaixaHoraria> faixas;
-  const BarChartDemanda({super.key, required this.faixas});
+  final List<PontoDemanda> pontos;
+  final Granularidade granularidade;
+  const BarChartDemanda({super.key, required this.pontos, required this.granularidade});
 
   static const double _leftSize = 44;
   static const double _bottomSize = 28;
 
-  double get _maxY {
-    final m = faixas.map((f) => f.total).fold<double>(0, (a, b) => a > b ? a : b);
-    return ((m / 3000).ceil() * 3000).clamp(3000, double.infinity).toDouble();
+  /// Escolhe um intervalo "redondo" de forma que o eixo tenha até 5 divisões.
+  static double _intervalo(double maxValor) {
+    const passos = [1000, 2000, 3000, 5000, 10000, 20000, 25000, 50000, 100000, 200000, 500000, 1000000];
+    for (final p in passos) {
+      if (maxValor / p <= 5) return p.toDouble();
+    }
+    return 1000000;
   }
 
   @override
   Widget build(BuildContext context) {
-    final maxY = _maxY;
+    final maxValor = pontos.fold<double>(0, (a, p) => max(a, p.total));
+    final intervalo = _intervalo(maxValor);
+    final maxY = max(intervalo, (maxValor / intervalo).ceil() * intervalo);
+    final porHora = granularidade == Granularidade.hora;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
@@ -33,30 +43,31 @@ class BarChartDemanda extends StatelessWidget {
         children: [
           const Text('Demanda de passageiros', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
           const SizedBox(height: 6),
-          const Text(
-            'Distribuição por faixa horária — pagantes, não pagantes e viagens',
-            style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+          Text(
+            'Distribuição por ${porHora ? 'faixa horária' : 'dia'} — pagantes, não pagantes e viagens',
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 13),
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: Stack(
-              children: [
-                LayoutBuilder(builder: (context, c) {
-                  final slot = (c.maxWidth - _leftSize) / faixas.length;
-                  final larguraBarra = (slot * 0.62).clamp(6.0, 60.0);
-                  return Stack(
-                    children: [
-                      BarChart(_barData(maxY, larguraBarra)),
-                      // Linha de viagens sobreposta, alinhada com a área útil das barras
-                      Padding(
-                        padding: const EdgeInsets.only(left: _leftSize, bottom: _bottomSize),
-                        child: IgnorePointer(child: LineChart(_lineData(maxY))),
-                      ),
-                    ],
-                  );
-                }),
-              ],
-            ),
+            child: pontos.isEmpty
+                ? const Center(
+                    child: Text('Sem dados para o período selecionado.',
+                        style: TextStyle(color: AppColors.textMuted)),
+                  )
+                : LayoutBuilder(builder: (context, c) {
+                    final slot = (c.maxWidth - _leftSize) / pontos.length;
+                    final larguraBarra = (slot * 0.62).clamp(3.0, 60.0);
+                    return Stack(
+                      children: [
+                        BarChart(_barData(maxY, intervalo, larguraBarra)),
+                        // Linha de viagens sobreposta, alinhada com a área útil das barras
+                        Padding(
+                          padding: const EdgeInsets.only(left: _leftSize, bottom: _bottomSize),
+                          child: IgnorePointer(child: LineChart(_lineData(maxY))),
+                        ),
+                      ],
+                    );
+                  }),
           ),
           const SizedBox(height: 8),
           const Wrap(
@@ -74,7 +85,8 @@ class BarChartDemanda extends StatelessWidget {
     );
   }
 
-  BarChartData _barData(double maxY, double larguraBarra) {
+  BarChartData _barData(double maxY, double intervalo, double larguraBarra) {
+    final passoRotulo = max(1, (pontos.length / 12).ceil());
     return BarChartData(
       maxY: maxY,
       minY: 0,
@@ -82,7 +94,7 @@ class BarChartDemanda extends StatelessWidget {
       borderData: FlBorderData(show: false),
       gridData: FlGridData(
         drawVerticalLine: false,
-        horizontalInterval: 3000,
+        horizontalInterval: intervalo,
         getDrawingHorizontalLine: (_) =>
             const FlLine(color: AppColors.border, strokeWidth: 1, dashArray: [4, 4]),
       ),
@@ -93,7 +105,7 @@ class BarChartDemanda extends StatelessWidget {
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: _leftSize,
-            interval: 3000,
+            interval: intervalo,
             getTitlesWidget: (v, _) => Align(
               alignment: Alignment.centerLeft,
               child: Text(fmtEixo(v), style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
@@ -106,10 +118,10 @@ class BarChartDemanda extends StatelessWidget {
             reservedSize: _bottomSize,
             getTitlesWidget: (v, _) {
               final i = v.toInt();
-              if (i < 0 || i >= faixas.length) return const SizedBox.shrink();
+              if (i < 0 || i >= pontos.length || i % passoRotulo != 0) return const SizedBox.shrink();
               return Padding(
                 padding: const EdgeInsets.only(top: 10),
-                child: Text(faixas[i].rotulo, style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                child: Text(pontos[i].rotulo, style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
               );
             },
           ),
@@ -119,19 +131,19 @@ class BarChartDemanda extends StatelessWidget {
         touchTooltipData: BarTouchTooltipData(
           getTooltipColor: (_) => const Color(0xFF1A2A45),
           getTooltipItem: (group, _, rod, __) {
-            final f = faixas[group.x];
+            final p = pontos[group.x];
             return BarTooltipItem(
-              '${f.rotulo}\n',
+              '${p.rotulo}\n',
               const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
               children: [
                 TextSpan(
-                    text: 'Pagantes: ${fmtInt(f.pagantes)}\n',
+                    text: 'Pagantes: ${fmtInt(p.pagantes)}\n',
                     style: const TextStyle(color: AppColors.pagantes, fontSize: 11)),
                 TextSpan(
-                    text: 'Não pagantes: ${fmtInt(f.naoPagantes)}\n',
+                    text: 'Não pagantes: ${fmtInt(p.naoPagantes)}\n',
                     style: const TextStyle(color: AppColors.naoPagantes, fontSize: 11)),
                 TextSpan(
-                    text: 'Viagens: ${fmtInt(f.viagens)}',
+                    text: 'Viagens: ${fmtInt(p.viagens)}',
                     style: const TextStyle(color: AppColors.viagens, fontSize: 11)),
               ],
             );
@@ -139,18 +151,18 @@ class BarChartDemanda extends StatelessWidget {
         ),
       ),
       barGroups: [
-        for (var i = 0; i < faixas.length; i++)
+        for (var i = 0; i < pontos.length; i++)
           BarChartGroupData(
             x: i,
             barRods: [
               BarChartRodData(
-                toY: faixas[i].total,
+                toY: pontos[i].total,
                 width: larguraBarra,
                 color: Colors.transparent,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                 rodStackItems: [
-                  BarChartRodStackItem(0, faixas[i].pagantes, AppColors.pagantes),
-                  BarChartRodStackItem(faixas[i].pagantes, faixas[i].total, AppColors.naoPagantes),
+                  BarChartRodStackItem(0, pontos[i].pagantes, AppColors.pagantes),
+                  BarChartRodStackItem(pontos[i].pagantes, pontos[i].total, AppColors.naoPagantes),
                 ],
               ),
             ],
@@ -162,7 +174,7 @@ class BarChartDemanda extends StatelessWidget {
   LineChartData _lineData(double maxY) {
     return LineChartData(
       minX: -0.5,
-      maxX: faixas.length - 0.5,
+      maxX: pontos.length - 0.5,
       minY: 0,
       maxY: maxY,
       gridData: const FlGridData(show: false),
@@ -171,7 +183,7 @@ class BarChartDemanda extends StatelessWidget {
       lineTouchData: const LineTouchData(enabled: false),
       lineBarsData: [
         LineChartBarData(
-          spots: [for (var i = 0; i < faixas.length; i++) FlSpot(i.toDouble(), faixas[i].viagens)],
+          spots: [for (var i = 0; i < pontos.length; i++) FlSpot(i.toDouble(), pontos[i].viagens)],
           isCurved: true,
           color: AppColors.viagens,
           barWidth: 1.5,
@@ -189,7 +201,7 @@ class _Legenda extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
+    return Row(mainAxisSize: MainAxisSize.min, children: [
       Container(width: 8, height: 8, decoration: BoxDecoration(color: cor, borderRadius: BorderRadius.circular(2))),
       const SizedBox(width: 6),
       Text(texto, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),

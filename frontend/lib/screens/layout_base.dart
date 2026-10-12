@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../widgets/sidebar_menu.dart';
 import 'passageiros.dart';
+import 'visao_geral.dart';
 
 class LayoutBase extends StatefulWidget {
   const LayoutBase({super.key});
@@ -12,7 +13,7 @@ class LayoutBase extends StatefulWidget {
 }
 
 class _LayoutBaseState extends State<LayoutBase> {
-  int _indice = 2; // Passageiros
+  int _indice = 0; // Visão geral
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +38,10 @@ class _LayoutBaseState extends State<LayoutBase> {
 
   Widget _tela() {
     switch (_indice) {
+      case 0:
+        return const VisaoGeralScreen();
       case 2:
-        return PassageirosScreen();
+        return const PassageirosScreen();
       default:
         return Center(
           child: Text(

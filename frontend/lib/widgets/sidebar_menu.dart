@@ -61,14 +61,6 @@ class SidebarMenu extends StatelessWidget {
             ),
           ),
           const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
-            child: _Item(
-              data: const MenuItemData('Configurações', Icons.settings_outlined),
-              ativo: false,
-              compacto: compacto,
-            ),
-          ),
           _UserCard(compacto: compacto),
         ],
       ),

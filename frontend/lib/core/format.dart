@@ -52,3 +52,21 @@ double intervaloEixo(double maxValor) {
   }
   return 1000000;
 }
+
+/// 6.2 -> "6,2"
+String fmtDecimal(num v) => _dec.format(v);
+
+final _dec2 = NumberFormat('#,##0.00', 'pt_BR');
+
+/// 5.0568 -> "5,06"
+String fmtDecimal2(num v) => _dec2.format(v);
+
+/// Tempo decorrido em texto: "agora mesmo", "há 6 min", "há 2 h", "há 3 d".
+String fmtHa(DateTime t) {
+  final m = DateTime.now().difference(t).inMinutes;
+  if (m < 1) return 'agora mesmo';
+  if (m < 60) return 'há $m min';
+  final h = m ~/ 60;
+  if (h < 24) return 'há $h h';
+  return 'há ${h ~/ 24} d';
+}

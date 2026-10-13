@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../core/theme.dart';
 import '../widgets/sidebar_menu.dart';
+import 'financeiro.dart';
+import 'frota_viagens.dart';
+import 'linhas.dart';
 import 'passageiros.dart';
+import 'relatorios.dart';
 import 'visao_geral.dart';
 
 class LayoutBase extends StatefulWidget {
@@ -40,8 +44,16 @@ class _LayoutBaseState extends State<LayoutBase> {
     switch (_indice) {
       case 0:
         return const VisaoGeralScreen();
+      case 1:
+        return const FrotaViagensScreen();
       case 2:
         return const PassageirosScreen();
+      case 3:
+        return const FinanceiroScreen();
+      case 4:
+        return const LinhasScreen();
+      case 5:
+        return const RelatoriosScreen();
       default:
         return Center(
           child: Text(

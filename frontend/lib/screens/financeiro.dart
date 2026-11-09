@@ -21,20 +21,31 @@ class FinanceiroScreen extends StatelessWidget {
       titulo: 'Financeiro',
       carregar: repo.carregar,
       intervalo: (d) => (d.dataInicio, d.dataFim),
+      info: (d) => d.info,
       corpoRolavel: _corpo,
     );
   }
 
-  String _resultado(num v) => '${v < 0 ? '-' : ''}R\$ ${fmtInt(v.abs())}';
+  String _resultado(num? v) => v == null
+      ? 'Indisponível'
+      : '${v < 0 ? '-' : ''}R\$ ${fmtDecimal2(v.abs())}';
 
   Widget _corpo(FinanceiroData d, bool largo) {
-    final deficit = d.resultado < 0;
+    final deficit = (d.resultado ?? 0) < 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         KpiGrid(
-          kpis: [d.receita, d.custo],
-          icones: const [Icons.show_chart, Icons.account_balance_wallet_outlined],
+          kpis: [
+            d.receita,
+            d.custo,
+            if (d.vendasCreditos != null) d.vendasCreditos!
+          ],
+          icones: const [
+            Icons.show_chart,
+            Icons.account_balance_wallet_outlined,
+            Icons.payments_outlined
+          ],
         ),
         const SizedBox(height: 22),
         GradeResponsiva(
@@ -43,7 +54,11 @@ class FinanceiroScreen extends StatelessWidget {
             StatCard(
               titulo: 'Resultado operacional',
               valor: _resultado(d.resultado),
-              legenda: deficit ? 'déficit no período' : 'superávit no período',
+              legenda: d.resultado == null
+                  ? 'sem fonte validada'
+                  : deficit
+                      ? 'déficit no período'
+                      : 'superávit no período',
             ),
             StatCard(
               titulo: 'Cobertura tarifária',

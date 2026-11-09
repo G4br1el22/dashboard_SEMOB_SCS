@@ -32,13 +32,16 @@ class VisaoGeralScreen extends StatelessWidget {
       titulo: 'Dashboard de Operação de Transporte',
       carregar: repo.carregar,
       intervalo: (d) => (d.dataInicio, d.dataFim),
+      info: (d) => d.info,
       corpoRolavel: _corpo,
     );
   }
 
   Widget _corpo(VisaoGeralData d, bool largo) {
-    final demanda = BarChartDemanda(pontos: d.serie, granularidade: d.granularidade);
-    final composicao = DonutChartComp(pagantes: d.pagantes.valor, naoPagantes: d.naoPagantes.valor);
+    final demanda =
+        BarChartDemanda(pontos: d.serie, granularidade: d.granularidade);
+    final composicao = DonutChartComp(
+        pagantes: d.pagantes.valor, naoPagantes: d.naoPagantes.valor);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -68,7 +71,8 @@ class VisaoGeralScreen extends StatelessWidget {
           custoTotal: d.custo.valor,
         ),
         SizedBox(height: largo ? 22 : 16),
-        TabelaLinhas(linhas: d.linhas, diario: d.granularidade == Granularidade.hora),
+        TabelaLinhas(
+            linhas: d.linhas, diario: d.granularidade == Granularidade.hora),
       ],
     );
   }

@@ -1,0 +1,277 @@
+{
+  "data_inicio": "2026-09-25",
+  "data_fim": "2026-10-01",
+  "granularidade": "dia",
+  "fonte": "demo",
+  "ultima_data_disponivel": "2026-10-01",
+  "consultado_em": "2026-11-08T13:15:10.695969+00:00",
+  "sincronizado_em": null,
+  "sem_dados": false,
+  "avisos": [
+    "DEMONSTRAÇÃO: dados inteiramente sintéticos; sem conexão ao Atlas.",
+    "Receita tarifária e custo operacional não têm fonte validada. Vendas de créditos são apresentadas separadamente.",
+    "Ocupação, pontualidade, frota cadastrada, manutenção e idade não possuem fonte validada."
+  ],
+  "quilometragem": {
+    "valor": "8966.10",
+    "variacao": null,
+    "sparkline": [
+      "1185.60",
+      "1222.65",
+      "1259.70",
+      "1296.75",
+      "1333.80",
+      "1370.85",
+      "1296.75"
+    ],
+    "parcial": false,
+    "dias_observados": 7,
+    "dias_esperados": 7
+  },
+  "viagens": {
+    "valor": "726",
+    "variacao": null,
+    "sparkline": [
+      "96",
+      "99",
+      "102",
+      "105",
+      "108",
+      "111",
+      "105"
+    ],
+    "parcial": false,
+    "dias_observados": 7,
+    "dias_esperados": 7
+  },
+  "pagantes": {
+    "valor": "17430",
+    "variacao": null,
+    "sparkline": [
+      "2475",
+      "2480",
+      "2485",
+      "2490",
+      "2495",
+      "2500",
+      "2505"
+    ],
+    "parcial": false,
+    "dias_observados": 7,
+    "dias_esperados": 7
+  },
+  "nao_pagantes": {
+    "valor": "6706",
+    "variacao": null,
+    "sparkline": [
+      "955",
+      "956",
+      "957",
+      "958",
+      "959",
+      "960",
+      "961"
+    ],
+    "parcial": false,
+    "dias_observados": 7,
+    "dias_esperados": 7
+  },
+  "vendas_creditos": {
+    "valor": "30653.70",
+    "variacao": null,
+    "sparkline": [
+      "4376.10",
+      "4377.10",
+      "4378.10",
+      "4379.10",
+      "4380.10",
+      "4381.10",
+      "4382.10"
+    ],
+    "parcial": false,
+    "dias_observados": 7,
+    "dias_esperados": 7
+  },
+  "receita": {
+    "valor": null,
+    "variacao": null,
+    "sparkline": [],
+    "parcial": false,
+    "dias_observados": 0,
+    "dias_esperados": 7
+  },
+  "custo": {
+    "valor": null,
+    "variacao": null,
+    "sparkline": [],
+    "parcial": false,
+    "dias_observados": 0,
+    "dias_esperados": 7
+  },
+  "serie": [
+    {
+      "rotulo": "25/09",
+      "data": "2026-09-25",
+      "pagantes": "2475",
+      "nao_pagantes": "955",
+      "viagens": "96"
+    },
+    {
+      "rotulo": "26/09",
+      "data": "2026-09-26",
+      "pagantes": "2480",
+      "nao_pagantes": "956",
+      "viagens": "99"
+    },
+    {
+      "rotulo": "27/09",
+      "data": "2026-09-27",
+      "pagantes": "2485",
+      "nao_pagantes": "957",
+      "viagens": "102"
+    },
+    {
+      "rotulo": "28/09",
+      "data": "2026-09-28",
+      "pagantes": "2490",
+      "nao_pagantes": "958",
+      "viagens": "105"
+    },
+    {
+      "rotulo": "29/09",
+      "data": "2026-09-29",
+      "pagantes": "2495",
+      "nao_pagantes": "959",
+      "viagens": "108"
+    },
+    {
+      "rotulo": "30/09",
+      "data": "2026-09-30",
+      "pagantes": "2500",
+      "nao_pagantes": "960",
+      "viagens": "111"
+    },
+    {
+      "rotulo": "01/10",
+      "data": "2026-10-01",
+      "pagantes": "2505",
+      "nao_pagantes": "961",
+      "viagens": "105"
+    }
+  ],
+  "financeiro": [],
+  "linhas": [
+    {
+      "codigo": "101",
+      "nome": "Linha 101",
+      "km": "2939.30",
+      "viagens": "238",
+      "pagantes": null,
+      "nao_pagantes": null,
+      "ocupacao": null,
+      "pontualidade": null,
+      "status": "indisponivel"
+    },
+    {
+      "codigo": "102",
+      "nome": "Linha 102",
+      "km": "3025.75",
+      "viagens": "245",
+      "pagantes": null,
+      "nao_pagantes": null,
+      "ocupacao": null,
+      "pontualidade": null,
+      "status": "indisponivel"
+    },
+    {
+      "codigo": "103",
+      "nome": "Linha 103",
+      "km": "3001.05",
+      "viagens": "243",
+      "pagantes": null,
+      "nao_pagantes": null,
+      "ocupacao": null,
+      "pontualidade": null,
+      "status": "indisponivel"
+    }
+  ],
+  "frota": {
+    "total": null,
+    "em_operacao": "12",
+    "em_manutencao": null,
+    "idade_media": null,
+    "meta_idade": null
+  },
+  "diario": [
+    {
+      "data": "2026-09-25",
+      "quilometragem": "1185.60",
+      "viagens": "96",
+      "pagantes": "2475",
+      "nao_pagantes": "955",
+      "vendas_creditos": "4376.10",
+      "receita": null,
+      "custo": null
+    },
+    {
+      "data": "2026-09-26",
+      "quilometragem": "1222.65",
+      "viagens": "99",
+      "pagantes": "2480",
+      "nao_pagantes": "956",
+      "vendas_creditos": "4377.10",
+      "receita": null,
+      "custo": null
+    },
+    {
+      "data": "2026-09-27",
+      "quilometragem": "1259.70",
+      "viagens": "102",
+      "pagantes": "2485",
+      "nao_pagantes": "957",
+      "vendas_creditos": "4378.10",
+      "receita": null,
+      "custo": null
+    },
+    {
+      "data": "2026-09-28",
+      "quilometragem": "1296.75",
+      "viagens": "105",
+      "pagantes": "2490",
+      "nao_pagantes": "958",
+      "vendas_creditos": "4379.10",
+      "receita": null,
+      "custo": null
+    },
+    {
+      "data": "2026-09-29",
+      "quilometragem": "1333.80",
+      "viagens": "108",
+      "pagantes": "2495",
+      "nao_pagantes": "959",
+      "vendas_creditos": "4380.10",
+      "receita": null,
+      "custo": null
+    },
+    {
+      "data": "2026-09-30",
+      "quilometragem": "1370.85",
+      "viagens": "111",
+      "pagantes": "2500",
+      "nao_pagantes": "960",
+      "vendas_creditos": "4381.10",
+      "receita": null,
+      "custo": null
+    },
+    {
+      "data": "2026-10-01",
+      "quilometragem": "1296.75",
+      "viagens": "105",
+      "pagantes": "2505",
+      "nao_pagantes": "961",
+      "vendas_creditos": "4382.10",
+      "receita": null,
+      "custo": null
+    }
+  ]
+}

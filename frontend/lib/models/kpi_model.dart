@@ -1,8 +1,10 @@
+import 'json_values.dart';
+
 enum KpiFormato { inteiro, km, moeda }
 
 class KpiModel {
   final String titulo;
-  final num valor;
+  final num? valor;
 
   /// null = sem comparação selecionada (o card esconde o selo)
   final double? variacaoPercentual;
@@ -12,6 +14,7 @@ class KpiModel {
   /// false para indicadores onde subir é ruim (ex.: custo operacional).
   /// Define a cor do selo e da mini-linha: verde = bom, vermelho = ruim.
   final bool altaEhBoa;
+  final bool parcial;
 
   const KpiModel({
     required this.titulo,
@@ -20,6 +23,7 @@ class KpiModel {
     required this.sparkline,
     this.formato = KpiFormato.inteiro,
     this.altaEhBoa = true,
+    this.parcial = false,
   });
 
   /// JSON esperado: {"valor": 42380, "variacao": 3.1, "sparkline": [..]}
@@ -31,9 +35,12 @@ class KpiModel {
   }) =>
       KpiModel(
         titulo: titulo,
-        valor: j['valor'] as num,
-        variacaoPercentual: (j['variacao'] as num?)?.toDouble(),
-        sparkline: ((j['sparkline'] ?? []) as List).map((e) => (e as num).toDouble()).toList(),
+        valor: numeroJson(j['valor']),
+        parcial: j['parcial'] == true,
+        variacaoPercentual: numeroJson(j['variacao'])?.toDouble(),
+        sparkline: ((j['sparkline'] ?? []) as List)
+            .map((e) => numeroJson(e)!.toDouble())
+            .toList(),
         formato: formato,
         altaEhBoa: altaEhBoa,
       );

@@ -19,6 +19,7 @@ class PassageirosScreen extends StatelessWidget {
       titulo: 'Passageiros',
       carregar: repo.carregar,
       intervalo: (d) => (d.dataInicio, d.dataFim),
+      info: (d) => d.info,
       alturaMinimaLargo: 640,
       corpoLargo: _corpoLargo,
       corpoEmpilhado: _corpoEmpilhado,
@@ -31,7 +32,8 @@ class PassageirosScreen extends StatelessWidget {
           KpiCard(kpi: d.naoPagantes, icone: Icons.person_off_outlined),
         ];
         if (c.maxWidth < 480) {
-          return Column(children: [cards[0], const SizedBox(height: 12), cards[1]]);
+          return Column(
+              children: [cards[0], const SizedBox(height: 12), cards[1]]);
         }
         return Row(children: [
           Expanded(child: cards[0]),
@@ -54,10 +56,15 @@ class PassageirosScreen extends StatelessWidget {
         Expanded(
           child: Row(
             children: [
-              Expanded(flex: 2, child: BarChartDemanda(pontos: d.serie, granularidade: d.granularidade)),
+              Expanded(
+                  flex: 2,
+                  child: BarChartDemanda(
+                      pontos: d.serie, granularidade: d.granularidade)),
               const SizedBox(width: 22),
               Expanded(
-                child: DonutChartComp(pagantes: d.pagantes.valor, naoPagantes: d.naoPagantes.valor),
+                child: DonutChartComp(
+                    pagantes: d.pagantes.valor,
+                    naoPagantes: d.naoPagantes.valor),
               ),
             ],
           ),
@@ -71,11 +78,15 @@ class PassageirosScreen extends StatelessWidget {
       children: [
         _kpis(d),
         const SizedBox(height: 16),
-        SizedBox(height: 400, child: BarChartDemanda(pontos: d.serie, granularidade: d.granularidade)),
+        SizedBox(
+            height: 400,
+            child: BarChartDemanda(
+                pontos: d.serie, granularidade: d.granularidade)),
         const SizedBox(height: 16),
         SizedBox(
           height: 420,
-          child: DonutChartComp(pagantes: d.pagantes.valor, naoPagantes: d.naoPagantes.valor),
+          child: DonutChartComp(
+              pagantes: d.pagantes.valor, naoPagantes: d.naoPagantes.valor),
         ),
       ],
     );

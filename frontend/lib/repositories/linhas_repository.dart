@@ -1,10 +1,12 @@
+import '../models/filtros.dart';
 import '../core/config.dart';
 import '../models/linhas_data.dart';
 import 'api_linhas_repository.dart';
 import 'mock_linhas_repository.dart';
 
 abstract class LinhasRepository {
-  Future<LinhasData> carregar();
+  Future<LinhasData> carregar(
+      [FiltrosDashboard filtros = const FiltrosDashboard()]);
 }
 
 /// Escolhe mock ou API conforme --dart-define=USE_MOCK (padrão: mock).

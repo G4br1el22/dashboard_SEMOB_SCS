@@ -1,3 +1,4 @@
+import '../models/filtros.dart';
 import 'package:dio/dio.dart';
 
 import '../core/api_client.dart';
@@ -11,8 +12,9 @@ class ApiLinhasRepository implements LinhasRepository {
   ApiLinhasRepository({Dio? dio}) : _dio = dio ?? ApiClient.dio;
 
   @override
-  Future<LinhasData> carregar() async {
-    final json = await apiGetJson(_dio, '/api/linhas', {});
+  Future<LinhasData> carregar(
+      [FiltrosDashboard filtros = const FiltrosDashboard()]) async {
+    final json = await apiGetJson(_dio, '/api/linhas', filtros.toQuery());
     return LinhasData.fromJson(json);
   }
 }

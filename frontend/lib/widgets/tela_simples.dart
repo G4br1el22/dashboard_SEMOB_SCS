@@ -79,7 +79,9 @@ class _TelaSimplesState<T> extends State<TelaSimples<T>> {
       });
     } catch (e) {
       if (!mounted || id != _requisicao) return;
-      if (silencioso && _data != null) return; // mantém os dados antigos na tela
+      if (silencioso && _data != null) {
+        return; // mantém os dados antigos na tela
+      }
       setState(() {
         _erro = e;
         _carregando = false;
@@ -99,14 +101,18 @@ class _TelaSimplesState<T> extends State<TelaSimples<T>> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.titulo, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
+                Text(widget.titulo,
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.w700)),
                 const SizedBox(height: 6),
                 Row(children: [
-                  const Icon(Icons.calendar_today_outlined, size: 14, color: AppColors.textMuted),
+                  const Icon(Icons.calendar_today_outlined,
+                      size: 14, color: AppColors.textMuted),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(widget.subtitulo,
-                        style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
+                        style: const TextStyle(
+                            color: AppColors.textMuted, fontSize: 13)),
                   ),
                 ]),
                 const SizedBox(height: 14),
@@ -114,14 +120,18 @@ class _TelaSimplesState<T> extends State<TelaSimples<T>> {
                   alignment: Alignment.centerRight,
                   child: SizedBox(
                     height: 18,
-                    child: (d == null || widget.indicadorDireita == null) ? null : widget.indicadorDireita!(d),
+                    child: (d == null || widget.indicadorDireita == null)
+                        ? null
+                        : widget.indicadorDireita!(d),
                   ),
                 ),
                 const SizedBox(height: 14),
                 const Divider(height: 1),
                 SizedBox(
                   height: 2,
-                  child: _carregando ? const LinearProgressIndicator(minHeight: 2) : null,
+                  child: _carregando
+                      ? const LinearProgressIndicator(minHeight: 2)
+                      : null,
                 ),
               ],
             ),
@@ -157,7 +167,8 @@ class _TelaSimplesState<T> extends State<TelaSimples<T>> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cloud_off_outlined, size: 36, color: AppColors.textMuted),
+            const Icon(Icons.cloud_off_outlined,
+                size: 36, color: AppColors.textMuted),
             const SizedBox(height: 10),
             Text('$_erro', style: const TextStyle(color: AppColors.textMuted)),
             const SizedBox(height: 14),

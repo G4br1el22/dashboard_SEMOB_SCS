@@ -8,9 +8,14 @@ class LegendaItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisSize: MainAxisSize.min, children: [
-      Container(width: 8, height: 8, decoration: BoxDecoration(color: cor, borderRadius: BorderRadius.circular(2))),
+      Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+              color: cor, borderRadius: BorderRadius.circular(2))),
       const SizedBox(width: 6),
-      Text(texto, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+      Text(texto,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
     ]);
   }
 }

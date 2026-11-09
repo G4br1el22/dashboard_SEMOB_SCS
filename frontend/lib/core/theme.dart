@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
   static const bg = Color(0xFF0A1424);
@@ -20,7 +19,7 @@ ThemeData buildDarkTheme() {
   return base.copyWith(
     scaffoldBackgroundColor: AppColors.bg,
     colorScheme: base.colorScheme.copyWith(primary: AppColors.accent),
-    textTheme: GoogleFonts.interTextTheme(base.textTheme).apply(
+    textTheme: base.textTheme.apply(
       bodyColor: AppColors.textPrimary,
       displayColor: AppColors.textPrimary,
     ),
@@ -28,8 +27,12 @@ ThemeData buildDarkTheme() {
   );
 }
 
-TextStyle monoStyle({double size = 14, FontWeight weight = FontWeight.w700, Color? color}) =>
-    GoogleFonts.jetBrainsMono(
+TextStyle monoStyle(
+        {double size = 14,
+        FontWeight weight = FontWeight.w700,
+        Color? color}) =>
+    TextStyle(
+      fontFamily: 'Consolas',
       fontSize: size,
       fontWeight: weight,
       color: color ?? AppColors.textPrimary,

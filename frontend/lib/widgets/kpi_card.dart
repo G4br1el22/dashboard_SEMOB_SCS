@@ -10,11 +10,13 @@ class KpiCard extends StatelessWidget {
   final IconData icone;
   const KpiCard({super.key, required this.kpi, required this.icone});
 
-  String get _valor => switch (kpi.formato) {
-        KpiFormato.inteiro => fmtInt(kpi.valor),
-        KpiFormato.km => '${fmtInt(kpi.valor)} km',
-        KpiFormato.moeda => 'R\$ ${fmtInt(kpi.valor)}',
-      };
+  String get _valor => kpi.valor == null
+      ? 'Indisponível'
+      : switch (kpi.formato) {
+          KpiFormato.inteiro => fmtInt(kpi.valor),
+          KpiFormato.km => '${fmtDecimal2(kpi.valor)} km',
+          KpiFormato.moeda => 'R\$ ${fmtDecimal2(kpi.valor)}',
+        };
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,8 @@ class KpiCard extends StatelessWidget {
     final cor = bom ? AppColors.teal : AppColors.viagens;
 
     return LayoutBuilder(builder: (context, c) {
-      final mostraSpark = c.maxWidth > 330;
+      final mostraSpark =
+          c.maxWidth > 330 && kpi.valor != null && kpi.sparkline.isNotEmpty;
       return Container(
         height: 126,
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
@@ -41,20 +44,25 @@ class KpiCard extends StatelessWidget {
                 Container(
                   width: 36,
                   height: 36,
-                  decoration:
-                      BoxDecoration(color: const Color(0xFF16253F), borderRadius: BorderRadius.circular(8)),
+                  decoration: BoxDecoration(
+                      color: const Color(0xFF16253F),
+                      borderRadius: BorderRadius.circular(8)),
                   child: Icon(icone, size: 18, color: AppColors.pagantes),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(kpi.titulo,
+                  child: Text('${kpi.titulo}${kpi.parcial ? ' (parcial)' : ''}',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 13.5, color: Color(0xFFD5DEEC))),
+                      style: const TextStyle(
+                          fontSize: 13.5, color: Color(0xFFD5DEEC))),
                 ),
                 if (mostraSpark) ...[
                   const SizedBox(width: 8),
-                  SizedBox(width: 100, height: 34, child: _Sparkline(valores: kpi.sparkline, cor: cor)),
+                  SizedBox(
+                      width: 100,
+                      height: 34,
+                      child: _Sparkline(valores: kpi.sparkline, cor: cor)),
                 ],
               ],
             ),
@@ -72,14 +80,18 @@ class KpiCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 if (v != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: cor.withOpacity(0.15),
+                      color: cor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       '${subiu ? '↗' : '↘'} ${v.abs().toStringAsFixed(1).replaceAll('.', ',')}%',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: cor),
+                      style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: cor),
                     ),
                   ),
               ],
@@ -106,7 +118,10 @@ class _Sparkline extends StatelessWidget {
         lineTouchData: const LineTouchData(enabled: false),
         lineBarsData: [
           LineChartBarData(
-            spots: [for (var i = 0; i < valores.length; i++) FlSpot(i.toDouble(), valores[i])],
+            spots: [
+              for (var i = 0; i < valores.length; i++)
+                FlSpot(i.toDouble(), valores[i])
+            ],
             isCurved: false,
             color: cor,
             barWidth: 1.8,

@@ -5,10 +5,10 @@ import '../models/filtros.dart';
 final _int = NumberFormat('#,##0', 'pt_BR');
 final _dec = NumberFormat('#,##0.0', 'pt_BR');
 
-String fmtInt(num v) => _int.format(v);
+String fmtInt(num? v) => v == null ? '—' : _int.format(v);
 
 /// 58300 -> "58,3 mil"
-String fmtMil(num v) => '${_dec.format(v / 1000)} mil';
+String fmtMil(num? v) => v == null ? '—' : '${_dec.format(v / 1000)} mil';
 
 /// Eixo: 3000 -> "3 mil", 1500 -> "1,5 mil", 2000000 -> "2 mi"
 String fmtEixo(num v) {
@@ -24,7 +24,7 @@ String fmtEixo(num v) {
   return fmtInt(v);
 }
 
-String fmtPct(double v) => '${_dec.format(v)}%';
+String fmtPct(double? v) => v == null ? '—' : '${_dec.format(v)}%';
 
 /// Subtítulo do cabeçalho conforme o período exibido.
 String fmtSubtitulo(DateTime inicio, DateTime fim, Periodo periodo) {
@@ -32,7 +32,7 @@ String fmtSubtitulo(DateTime inicio, DateTime fim, Periodo periodo) {
     final dia = DateFormat('EEEE', 'pt_BR').format(inicio).split('-').first;
     final cap = dia[0].toUpperCase() + dia.substring(1);
     final data = DateFormat("d 'de' MMMM 'de' y", 'pt_BR').format(inicio);
-    return '$cap, $data${periodo == Periodo.dia ? ' · dados do dia anterior' : ''}';
+    return '$cap, $data';
   }
   final f = DateFormat('dd/MM/yyyy');
   final sufixo = switch (periodo) {
@@ -46,7 +46,29 @@ String fmtSubtitulo(DateTime inicio, DateTime fim, Periodo periodo) {
 
 /// Escolhe um intervalo "redondo" de forma que o eixo Y tenha até 5 divisões.
 double intervaloEixo(double maxValor) {
-  const passos = [1000, 2000, 3000, 5000, 10000, 20000, 25000, 50000, 100000, 200000, 500000, 1000000];
+  const passos = [
+    1,
+    2,
+    5,
+    10,
+    20,
+    50,
+    100,
+    200,
+    500,
+    1000,
+    2000,
+    3000,
+    5000,
+    10000,
+    20000,
+    25000,
+    50000,
+    100000,
+    200000,
+    500000,
+    1000000
+  ];
   for (final p in passos) {
     if (maxValor / p <= 5) return p.toDouble();
   }
@@ -54,12 +76,12 @@ double intervaloEixo(double maxValor) {
 }
 
 /// 6.2 -> "6,2"
-String fmtDecimal(num v) => _dec.format(v);
+String fmtDecimal(num? v) => v == null ? '—' : _dec.format(v);
 
 final _dec2 = NumberFormat('#,##0.00', 'pt_BR');
 
 /// 5.0568 -> "5,06"
-String fmtDecimal2(num v) => _dec2.format(v);
+String fmtDecimal2(num? v) => v == null ? '—' : _dec2.format(v);
 
 /// Tempo decorrido em texto: "agora mesmo", "há 6 min", "há 2 h", "há 3 d".
 String fmtHa(DateTime t) {

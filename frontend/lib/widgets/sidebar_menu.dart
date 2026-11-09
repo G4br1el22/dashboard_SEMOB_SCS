@@ -14,7 +14,6 @@ const menuItens = <MenuItemData>[
   MenuItemData('Financeiro', Icons.account_balance_wallet_outlined),
   MenuItemData('Linhas', Icons.alt_route),
   MenuItemData('Relatórios', Icons.description_outlined),
-  MenuItemData('Versão mobile', Icons.smartphone_outlined),
 ];
 
 class SidebarMenu extends StatelessWidget {
@@ -77,11 +76,14 @@ class _Logo extends StatelessWidget {
     final icone = Container(
       width: 42,
       height: 42,
-      decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(
+          color: AppColors.accent, borderRadius: BorderRadius.circular(10)),
       child: const Icon(Icons.person_pin_circle_outlined, color: Colors.white),
     );
     if (compacto) {
-      return Padding(padding: const EdgeInsets.fromLTRB(0, 18, 0, 10), child: Center(child: icone));
+      return Padding(
+          padding: const EdgeInsets.fromLTRB(0, 18, 0, 10),
+          child: Center(child: icone));
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 10),
@@ -95,7 +97,8 @@ class _Logo extends StatelessWidget {
               children: [
                 Text('SEMOB-SCS',
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
                 Text('Mobilidade Urbana',
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
@@ -113,13 +116,18 @@ class _Item extends StatelessWidget {
   final bool ativo;
   final bool compacto;
   final VoidCallback? onTap;
-  const _Item({required this.data, required this.ativo, required this.compacto, this.onTap});
+  const _Item(
+      {required this.data,
+      required this.ativo,
+      required this.compacto,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final cor = ativo ? Colors.white : AppColors.textMuted;
     final conteudo = Padding(
-      padding: EdgeInsets.symmetric(horizontal: compacto ? 0 : 14, vertical: 12),
+      padding:
+          EdgeInsets.symmetric(horizontal: compacto ? 0 : 14, vertical: 12),
       child: compacto
           ? Center(child: Icon(data.icon, size: 20, color: cor))
           : Row(
@@ -148,7 +156,10 @@ class _Item extends StatelessWidget {
         child: Material(
           color: ativo ? const Color(0xFF1A3258) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
-          child: InkWell(borderRadius: BorderRadius.circular(8), onTap: onTap, child: conteudo),
+          child: InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: onTap,
+              child: conteudo),
         ),
       ),
     );
@@ -164,12 +175,16 @@ class _UserCard extends StatelessWidget {
     const avatar = CircleAvatar(
       radius: 16,
       backgroundColor: AppColors.accent,
-      child: Text('RM', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white)),
+      child: Text('SC',
+          style: TextStyle(
+              fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white)),
     );
     return Container(
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(color: const Color(0xFF12294D), borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+          color: const Color(0xFF12294D),
+          borderRadius: BorderRadius.circular(8)),
       child: compacto
           ? const Center(child: avatar)
           : const Row(
@@ -180,12 +195,14 @@ class _UserCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Rudolf M.',
+                      Text('Consulta local',
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                      Text('Gestor de operação',
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w600)),
+                      Text('SEMOB SCS',
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                          style: TextStyle(
+                              fontSize: 11, color: AppColors.textMuted)),
                     ],
                   ),
                 ),

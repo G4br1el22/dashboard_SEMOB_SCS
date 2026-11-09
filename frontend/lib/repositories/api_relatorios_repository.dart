@@ -1,3 +1,4 @@
+import '../models/filtros.dart';
 import 'package:dio/dio.dart';
 
 import '../core/api_client.dart';
@@ -15,18 +16,21 @@ class ApiRelatoriosRepository implements RelatoriosRepository {
   ApiRelatoriosRepository({Dio? dio}) : _dio = dio ?? ApiClient.dio;
 
   @override
-  Future<RelatoriosData> carregar() async {
-    final json = await apiGetJson(_dio, '/api/relatorios', {});
+  Future<RelatoriosData> carregar(
+      [FiltrosDashboard filtros = const FiltrosDashboard()]) async {
+    final json = await apiGetJson(_dio, '/api/relatorios', filtros.toQuery());
     return RelatoriosData.fromJson(json);
   }
 
   @override
-  Future<RelatorioGerado> gerar(String tipoId) async {
-    final json = await apiPostJson(_dio, '/api/relatorios/gerar', {'tipo': tipoId});
+  Future<RelatorioGerado> gerar(String tipoId,
+      [FiltrosDashboard filtros = const FiltrosDashboard()]) async {
+    final json = await apiPostJson(
+        _dio, '/api/relatorios/gerar', {'tipo': tipoId, ...filtros.toQuery()});
     return RelatorioGerado.fromJson(json);
   }
 
   @override
-  Uri? urlDownload(RelatorioGerado r) =>
-      Uri.parse('${AppConfig.apiBaseUrl}/api/relatorios/${r.id}/download');
+  Uri? urlDownload(RelatorioGerado r) => Uri.base
+      .resolve('${AppConfig.apiBaseUrl}/api/relatorios/${r.id}/download');
 }

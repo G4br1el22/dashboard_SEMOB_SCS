@@ -1,8 +1,6 @@
 import 'dart:math';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-
 import '../core/format.dart';
 import '../core/theme.dart';
 import '../models/chart_data.dart';
@@ -10,192 +8,105 @@ import '../models/chart_data.dart';
 class BarChartDemanda extends StatelessWidget {
   final List<PontoDemanda> pontos;
   final Granularidade granularidade;
-  const BarChartDemanda({super.key, required this.pontos, required this.granularidade});
-
-  static const double _leftSize = 44;
-  static const double _bottomSize = 28;
-
+  final bool apenasViagens;
+  const BarChartDemanda(
+      {super.key,
+      required this.pontos,
+      required this.granularidade,
+      this.apenasViagens = false});
   @override
   Widget build(BuildContext context) {
-    final maxValor = pontos.fold<double>(0, (a, p) => max(a, p.total));
-    final intervalo = intervaloEixo(maxValor);
-    final maxY = max(intervalo, (maxValor / intervalo).ceil() * intervalo);
-    final porHora = granularidade == Granularidade.hora;
-
+    final series = apenasViagens
+        ? [pontos.map((p) => p.viagens).toList()]
+        : [
+            pontos.map((p) => p.pagantes).toList(),
+            pontos.map((p) => p.naoPagantes).toList()
+          ];
+    final cores = apenasViagens
+        ? [AppColors.teal]
+        : [AppColors.pagantes, AppColors.naoPagantes];
+    final nomes = apenasViagens ? ['Viagens'] : ['Pagantes', 'Não pagantes'];
+    final valores = series.expand((s) => s).whereType<double>().toList();
+    final maxV = valores.fold<double>(0, max);
+    final intervalo = intervaloEixo(maxV);
     return Container(
-      padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Demanda de passageiros', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-          const SizedBox(height: 6),
-          Text(
-            'Distribuição por ${porHora ? 'faixa horária' : 'dia'} — pagantes, não pagantes e viagens',
-            style: const TextStyle(color: AppColors.textMuted, fontSize: 13),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: pontos.isEmpty
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(apenasViagens ? 'Viagens realizadas' : 'Demanda de passageiros',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 6),
+        Text(
+            'Distribuição por ${granularidade == Granularidade.hora ? 'hora' : 'dia'} · lacunas não equivalem a zero',
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
+        const SizedBox(height: 20),
+        Expanded(
+            child: valores.isEmpty
                 ? const Center(
-                    child: Text('Sem dados para o período selecionado.',
-                        style: TextStyle(color: AppColors.textMuted)),
-                  )
-                : LayoutBuilder(builder: (context, c) {
-                    final slot = (c.maxWidth - _leftSize) / pontos.length;
-                    final larguraBarra = (slot * 0.62).clamp(3.0, 60.0);
-                    return Stack(
-                      children: [
-                        BarChart(_barData(maxY, intervalo, larguraBarra)),
-                        // Linha de viagens sobreposta, alinhada com a área útil das barras
-                        Padding(
-                          padding: const EdgeInsets.only(left: _leftSize, bottom: _bottomSize),
-                          child: IgnorePointer(child: LineChart(_lineData(maxY))),
-                        ),
-                      ],
-                    );
-                  }),
-          ),
-          const SizedBox(height: 8),
-          const Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 16,
-            runSpacing: 6,
-            children: [
-              _Legenda(cor: AppColors.naoPagantes, texto: 'Não pagantes'),
-              _Legenda(cor: AppColors.pagantes, texto: 'Pagantes'),
-              _Legenda(cor: AppColors.viagens, texto: 'Viagens'),
-            ],
-          ),
-        ],
-      ),
+                    child: Text('Sem dados para o período selecionado.'))
+                : LineChart(LineChartData(
+                    minX: 0,
+                    maxX: max(1, pontos.length - 1).toDouble(),
+                    minY: 0,
+                    maxY: max(intervalo, (maxV / intervalo).ceil() * intervalo),
+                    borderData: FlBorderData(show: false),
+                    gridData: FlGridData(
+                        drawVerticalLine: false, horizontalInterval: intervalo),
+                    titlesData: FlTitlesData(
+                      topTitles: const AxisTitles(),
+                      rightTitles: const AxisTitles(),
+                      leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 46,
+                              interval: intervalo,
+                              getTitlesWidget: (v, _) => Text(fmtEixo(v),
+                                  style: const TextStyle(fontSize: 10)))),
+                      bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 30,
+                              interval: 1,
+                              getTitlesWidget: (v, _) {
+                                final i = v.round();
+                                if ((v - i).abs() > .01 ||
+                                    i < 0 ||
+                                    i >= pontos.length ||
+                                    i % max(1, (pontos.length / 8).ceil()) !=
+                                        0) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: Text(pontos[i].rotulo,
+                                        style: const TextStyle(fontSize: 10)));
+                              })),
+                    ),
+                    lineBarsData: [
+                      for (var n = 0; n < series.length; n++)
+                        LineChartBarData(
+                          spots: [
+                            for (var i = 0; i < pontos.length; i++)
+                              series[n][i] == null
+                                  ? FlSpot.nullSpot
+                                  : FlSpot(i.toDouble(), series[n][i]!)
+                          ],
+                          color: cores[n],
+                          barWidth: 2,
+                          isCurved: false,
+                          dotData: FlDotData(show: pontos.length == 1),
+                        )
+                    ],
+                  ))),
+        const SizedBox(height: 12),
+        Wrap(spacing: 18, children: [
+          for (var n = 0; n < nomes.length; n++)
+            Text(nomes[n], style: TextStyle(color: cores[n], fontSize: 12))
+        ]),
+      ]),
     );
-  }
-
-  BarChartData _barData(double maxY, double intervalo, double larguraBarra) {
-    final passoRotulo = max(1, (pontos.length / 12).ceil());
-    return BarChartData(
-      maxY: maxY,
-      minY: 0,
-      alignment: BarChartAlignment.spaceAround,
-      borderData: FlBorderData(show: false),
-      gridData: FlGridData(
-        drawVerticalLine: false,
-        horizontalInterval: intervalo,
-        getDrawingHorizontalLine: (_) =>
-            const FlLine(color: AppColors.border, strokeWidth: 1, dashArray: [4, 4]),
-      ),
-      titlesData: FlTitlesData(
-        topTitles: const AxisTitles(),
-        rightTitles: const AxisTitles(),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: _leftSize,
-            interval: intervalo,
-            getTitlesWidget: (v, _) => Align(
-              alignment: Alignment.centerLeft,
-              child: Text(fmtEixo(v), style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
-            ),
-          ),
-        ),
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: _bottomSize,
-            getTitlesWidget: (v, _) {
-              final i = v.toInt();
-              if (i < 0 || i >= pontos.length || i % passoRotulo != 0) return const SizedBox.shrink();
-              return Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(pontos[i].rotulo, style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
-              );
-            },
-          ),
-        ),
-      ),
-      barTouchData: BarTouchData(
-        touchTooltipData: BarTouchTooltipData(
-          getTooltipColor: (_) => const Color(0xFF1A2A45),
-          getTooltipItem: (group, _, rod, __) {
-            final p = pontos[group.x];
-            return BarTooltipItem(
-              '${p.rotulo}\n',
-              const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
-              children: [
-                TextSpan(
-                    text: 'Pagantes: ${fmtInt(p.pagantes)}\n',
-                    style: const TextStyle(color: AppColors.pagantes, fontSize: 11)),
-                TextSpan(
-                    text: 'Não pagantes: ${fmtInt(p.naoPagantes)}\n',
-                    style: const TextStyle(color: AppColors.naoPagantes, fontSize: 11)),
-                TextSpan(
-                    text: 'Viagens: ${fmtInt(p.viagens)}',
-                    style: const TextStyle(color: AppColors.viagens, fontSize: 11)),
-              ],
-            );
-          },
-        ),
-      ),
-      barGroups: [
-        for (var i = 0; i < pontos.length; i++)
-          BarChartGroupData(
-            x: i,
-            barRods: [
-              BarChartRodData(
-                toY: pontos[i].total,
-                width: larguraBarra,
-                color: Colors.transparent,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                rodStackItems: [
-                  BarChartRodStackItem(0, pontos[i].pagantes, AppColors.pagantes),
-                  BarChartRodStackItem(pontos[i].pagantes, pontos[i].total, AppColors.naoPagantes),
-                ],
-              ),
-            ],
-          ),
-      ],
-    );
-  }
-
-  LineChartData _lineData(double maxY) {
-    return LineChartData(
-      minX: -0.5,
-      maxX: pontos.length - 0.5,
-      minY: 0,
-      maxY: maxY,
-      gridData: const FlGridData(show: false),
-      borderData: FlBorderData(show: false),
-      titlesData: const FlTitlesData(show: false),
-      lineTouchData: const LineTouchData(enabled: false),
-      lineBarsData: [
-        LineChartBarData(
-          spots: [for (var i = 0; i < pontos.length; i++) FlSpot(i.toDouble(), pontos[i].viagens)],
-          isCurved: true,
-          color: AppColors.viagens,
-          barWidth: 1.5,
-          dotData: const FlDotData(show: false),
-        ),
-      ],
-    );
-  }
-}
-
-class _Legenda extends StatelessWidget {
-  final Color cor;
-  final String texto;
-  const _Legenda({required this.cor, required this.texto});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(mainAxisSize: MainAxisSize.min, children: [
-      Container(width: 8, height: 8, decoration: BoxDecoration(color: cor, borderRadius: BorderRadius.circular(2))),
-      const SizedBox(width: 6),
-      Text(texto, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
-    ]);
   }
 }

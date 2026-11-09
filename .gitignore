@@ -124,6 +124,10 @@ htmlcov/
 # -----------------------------------------------------------------------------
 # Python
 # -----------------------------------------------------------------------------
+backend/local/
+planejamento/evidencias/real/
+planejamento/DRIVE_*.md
+.tools/
 __pycache__/
 *.py[cod]
 *$py.class

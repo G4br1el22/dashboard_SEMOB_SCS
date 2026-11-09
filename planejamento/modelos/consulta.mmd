@@ -1,0 +1,16 @@
+sequenceDiagram
+  actor Analista
+  participant UI as Flutter
+  participant API as FastAPI
+  participant R as Repositório
+  participant DB as dados_consulta
+  Analista->>UI: Seleciona período e linha
+  UI->>API: GET /api/visao-geral com filtros
+  API->>API: Valida limites e datas
+  API->>R: Consulta janela e comparação
+  R->>DB: find com projeção permitida
+  DB-->>R: Registros preferenciais diários
+  R-->>API: Dados tipados
+  API->>API: Eleição de família e soma Decimal
+  API-->>UI: JSON exato com cobertura e null
+  UI-->>Analista: Indicadores e limitações

@@ -8,8 +8,9 @@ class MockLinhasRepository implements LinhasRepository {
   final _base = MockVisaoGeralRepository();
 
   @override
-  Future<LinhasData> carregar() async {
-    final v = await _base.carregar(const FiltrosDashboard());
+  Future<LinhasData> carregar(
+      [FiltrosDashboard filtros = const FiltrosDashboard()]) async {
+    final v = await _base.carregar(filtros);
     return LinhasData(
       sincronizadoEm: DateTime.now().subtract(const Duration(minutes: 6)),
       linhas: v.linhas,

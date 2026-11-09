@@ -1,3 +1,4 @@
+import '../widgets/source_banner.dart';
 import 'package:flutter/material.dart';
 
 import '../core/theme.dart';
@@ -32,7 +33,11 @@ class _LayoutBaseState extends State<LayoutBase> {
                 compacto: compacto,
                 onSelecionar: (i) => setState(() => _indice = i),
               ),
-              Expanded(child: _tela()),
+              Expanded(
+                  child: Column(children: [
+                const SourceBanner(),
+                Expanded(child: _tela())
+              ])),
             ],
           );
         },

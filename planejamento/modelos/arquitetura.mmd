@@ -1,0 +1,12 @@
+flowchart LR
+  HTML[Relatórios HTML autorizados] --> ETL[Importador manual existente]
+  ETL --> Mongo[(MongoDB Atlas)]
+  Mongo --> View[View dados_consulta]
+  View --> Read[Repositório de leitura]
+  Demo[Base sintética explícita] --> Read
+  Read --> Rules[Datas e agregações compartilhadas]
+  Rules --> API[FastAPI local]
+  Rules --> Export[Exportação PDF e XLSX]
+  API --> Flutter[Flutter web]
+  Export --> Local[(Arquivos locais persistentes)]
+  Local --> Flutter

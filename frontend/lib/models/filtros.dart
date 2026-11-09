@@ -36,6 +36,7 @@ extension ComparacaoX on Comparacao {
 /// Todos os filtros da tela em um objeto só (imutável).
 class FiltrosDashboard {
   final Periodo periodo;
+  final String? linha;
   final Comparacao comparacao;
   final bool apenasDiasUteis;
 
@@ -44,19 +45,23 @@ class FiltrosDashboard {
 
   const FiltrosDashboard({
     this.periodo = Periodo.dia,
-    this.comparacao = Comparacao.anoAnterior,
-    this.apenasDiasUteis = true,
+    this.linha,
+    this.comparacao = Comparacao.nenhuma,
+    this.apenasDiasUteis = false,
     this.intervalo,
   });
 
   FiltrosDashboard copyWith({
     Periodo? periodo,
+    String? linha,
+    bool limparLinha = false,
     Comparacao? comparacao,
     bool? apenasDiasUteis,
     DateTimeRange? intervalo,
   }) =>
       FiltrosDashboard(
         periodo: periodo ?? this.periodo,
+        linha: limparLinha ? null : linha ?? this.linha,
         comparacao: comparacao ?? this.comparacao,
         apenasDiasUteis: apenasDiasUteis ?? this.apenasDiasUteis,
         intervalo: intervalo ?? this.intervalo,
@@ -67,6 +72,7 @@ class FiltrosDashboard {
     final f = DateFormat('yyyy-MM-dd');
     return {
       'periodo': periodo.apiValue,
+      if (linha != null && linha!.isNotEmpty) 'linha': linha,
       'comparacao': comparacao.apiValue,
       'dias_uteis': apenasDiasUteis,
       if (periodo == Periodo.datas && intervalo != null) ...{

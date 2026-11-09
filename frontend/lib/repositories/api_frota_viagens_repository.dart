@@ -13,7 +13,8 @@ class ApiFrotaViagensRepository implements FrotaViagensRepository {
 
   @override
   Future<FrotaViagensData> carregar(FiltrosDashboard filtros) async {
-    final json = await apiGetJson(_dio, '/api/frota-viagens', filtros.toQuery());
+    final json =
+        await apiGetJson(_dio, '/api/frota-viagens', filtros.toQuery());
     return FrotaViagensData.fromJson(json);
   }
 }

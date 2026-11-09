@@ -5,8 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../models/relatorios_data.dart';
 import '../repositories/relatorios_repository.dart';
-import '../widgets/indicador_sync.dart';
-import '../widgets/tela_simples.dart';
+import '../models/filtros.dart';
+import '../widgets/tela_com_filtros.dart';
 
 class RelatoriosScreen extends StatelessWidget {
   /// Opcional (útil em testes). Se nulo, usa mock ou API conforme AppConfig.
@@ -16,23 +16,31 @@ class RelatoriosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final repo = repository ?? criarRelatoriosRepository();
-    return TelaSimples<RelatoriosData>(
+    var filtrosAtuais = const FiltrosDashboard();
+    return TelaComFiltros<RelatoriosData>(
       titulo: 'Relatórios',
-      subtitulo: 'Geração e exportação de relatórios operacionais',
-      carregar: repo.carregar,
-      indicadorDireita: (d) => IndicadorSync(sincronizadoEm: d.sincronizadoEm),
-      corpo: (d) => _CorpoRelatorios(dados: d, repo: repo),
+      carregar: (f) {
+        filtrosAtuais = f;
+        return repo.carregar(f);
+      },
+      intervalo: (d) =>
+          (d.dataInicio ?? DateTime.now(), d.dataFim ?? DateTime.now()),
+      corpoRolavel: (d, largo) =>
+          _CorpoRelatorios(dados: d, repo: repo, filtros: filtrosAtuais),
     );
   }
 }
 
-IconData _iconeFormato(FormatoRelatorio f) =>
-    f == FormatoRelatorio.pdf ? Icons.description_outlined : Icons.table_chart_outlined;
+IconData _iconeFormato(FormatoRelatorio f) => f == FormatoRelatorio.pdf
+    ? Icons.description_outlined
+    : Icons.table_chart_outlined;
 
 class _CorpoRelatorios extends StatefulWidget {
   final RelatoriosData dados;
   final RelatoriosRepository repo;
-  const _CorpoRelatorios({required this.dados, required this.repo});
+  final FiltrosDashboard filtros;
+  const _CorpoRelatorios(
+      {required this.dados, required this.repo, required this.filtros});
 
   @override
   State<_CorpoRelatorios> createState() => _CorpoRelatoriosState();
@@ -45,20 +53,25 @@ class _CorpoRelatoriosState extends State<_CorpoRelatorios> {
   @override
   void didUpdateWidget(covariant _CorpoRelatorios old) {
     super.didUpdateWidget(old);
-    // Chegaram dados novos do back (atualização automática): sincroniza a lista.
-    if (!identical(old.dados, widget.dados)) _recentes = List.of(widget.dados.recentes);
+    // Ao receber uma nova listagem, atualizar os documentos recentes.
+    if (!identical(old.dados, widget.dados)) {
+      _recentes = List.of(widget.dados.recentes);
+    }
   }
 
   void _aviso(String texto, {SnackBarAction? acao}) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(texto), action: acao, behavior: SnackBarBehavior.floating));
+      ..showSnackBar(SnackBar(
+          content: Text(texto),
+          action: acao,
+          behavior: SnackBarBehavior.floating));
   }
 
   Future<void> _gerar(RelatorioTipo t) async {
     setState(() => _gerando.add(t.id));
     try {
-      final r = await widget.repo.gerar(t.id);
+      final r = await widget.repo.gerar(t.id, widget.filtros);
       if (!mounted) return;
       setState(() {
         _recentes.insert(0, r);
@@ -91,7 +104,8 @@ class _CorpoRelatoriosState extends State<_CorpoRelatorios> {
         LayoutBuilder(builder: (context, c) {
           const gap = 16.0;
           final cols = c.maxWidth >= 720 ? 2 : 1;
-          final largura = ((c.maxWidth - gap * (cols - 1)) / cols).floorToDouble();
+          final largura =
+              ((c.maxWidth - gap * (cols - 1)) / cols).floorToDouble();
           return Wrap(
             spacing: gap,
             runSpacing: gap,
@@ -123,7 +137,9 @@ class _IconeBox extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         width: 40,
         height: 40,
-        decoration: BoxDecoration(color: const Color(0xFF16253F), borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(
+            color: const Color(0xFF16253F),
+            borderRadius: BorderRadius.circular(10)),
         child: Icon(icone, size: 20, color: AppColors.pagantes),
       );
 }
@@ -132,7 +148,8 @@ class _CartaoTipo extends StatelessWidget {
   final RelatorioTipo tipo;
   final bool gerando;
   final VoidCallback onGerar;
-  const _CartaoTipo({required this.tipo, required this.gerando, required this.onGerar});
+  const _CartaoTipo(
+      {required this.tipo, required this.gerando, required this.onGerar});
 
   @override
   Widget build(BuildContext context) {
@@ -158,20 +175,25 @@ class _CartaoTipo extends StatelessWidget {
                   child: Text(tipo.titulo,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600)),
                 ),
               ),
               const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: const Color(0xFF1A2A45), borderRadius: BorderRadius.circular(20)),
+                decoration: BoxDecoration(
+                    color: const Color(0xFF1A2A45),
+                    borderRadius: BorderRadius.circular(20)),
                 child: Text(tipo.formato.rotulo,
-                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700)),
+                    style: const TextStyle(
+                        fontSize: 11, fontWeight: FontWeight.w700)),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          Text(tipo.descricao, style: const TextStyle(fontSize: 13.5, color: Color(0xFFC4CFE0))),
+          Text(tipo.descricao,
+              style: const TextStyle(fontSize: 13.5, color: Color(0xFFC4CFE0))),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -179,7 +201,8 @@ class _CartaoTipo extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(tipo.frequencia,
-                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColors.textMuted)),
               ),
               FilledButton.icon(
                 onPressed: gerando ? null : onGerar,
@@ -187,18 +210,22 @@ class _CartaoTipo extends StatelessWidget {
                     ? const SizedBox(
                         width: 14,
                         height: 14,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
                       )
                     : const Icon(Icons.file_download_outlined, size: 16),
                 label: Text(gerando ? 'Gerando…' : 'Gerar'),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.accent,
-                  disabledBackgroundColor: AppColors.accent.withOpacity(0.6),
+                  disabledBackgroundColor:
+                      AppColors.accent.withValues(alpha: 0.6),
                   disabledForegroundColor: Colors.white,
                   minimumSize: const Size(0, 32),
                   padding: const EdgeInsets.symmetric(horizontal: 14),
-                  textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                  textStyle: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.w600),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6)),
                 ),
               ),
             ],
@@ -227,16 +254,18 @@ class _Recentes extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Relatórios recentes', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+          const Text('Relatórios recentes',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
           const SizedBox(height: 6),
-          const Text('Documentos gerados e enviados automaticamente por e-mail',
+          const Text('Arquivos gerados localmente para download',
               style: TextStyle(color: AppColors.textMuted, fontSize: 13)),
           const SizedBox(height: 16),
           if (recentes.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
               child: Center(
-                child: Text('Nenhum relatório gerado ainda.', style: TextStyle(color: AppColors.textMuted)),
+                child: Text('Nenhum relatório gerado ainda.',
+                    style: TextStyle(color: AppColors.textMuted)),
               ),
             )
           else
@@ -258,15 +287,19 @@ class _Recentes extends StatelessWidget {
                         children: [
                           Text(r.titulo,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600)),
+                              style: const TextStyle(
+                                  fontSize: 13.5, fontWeight: FontWeight.w600)),
                           const SizedBox(height: 4),
                           Row(children: [
-                            const Icon(Icons.mail_outline, size: 13, color: AppColors.textMuted),
+                            const Icon(Icons.schedule,
+                                size: 13, color: AppColors.textMuted),
                             const SizedBox(width: 6),
                             Flexible(
                               child: Text(fmt.format(r.geradoEm),
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.textMuted)),
                             ),
                           ]),
                         ],
@@ -282,8 +315,10 @@ class _Recentes extends StatelessWidget {
                         side: const BorderSide(color: AppColors.border),
                         minimumSize: const Size(0, 32),
                         padding: const EdgeInsets.symmetric(horizontal: 12),
-                        textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        textStyle: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w600),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6)),
                       ),
                     ),
                   ],

@@ -1,3 +1,4 @@
+import '../models/filtros.dart';
 import '../models/relatorios_data.dart';
 import 'relatorios_repository.dart';
 
@@ -35,7 +36,8 @@ class MockRelatoriosRepository implements RelatoriosRepository {
   ];
 
   @override
-  Future<RelatoriosData> carregar() async {
+  Future<RelatoriosData> carregar(
+      [FiltrosDashboard filtros = const FiltrosDashboard()]) async {
     await Future.delayed(const Duration(milliseconds: 350));
     return RelatoriosData(
       sincronizadoEm: DateTime.now().subtract(const Duration(minutes: 6)),
@@ -64,7 +66,8 @@ class MockRelatoriosRepository implements RelatoriosRepository {
   }
 
   @override
-  Future<RelatorioGerado> gerar(String tipoId) async {
+  Future<RelatorioGerado> gerar(String tipoId,
+      [FiltrosDashboard filtros = const FiltrosDashboard()]) async {
     await Future.delayed(const Duration(milliseconds: 1200));
     final t = _tipos.firstWhere((t) => t.id == tipoId);
     return RelatorioGerado(
@@ -76,5 +79,6 @@ class MockRelatoriosRepository implements RelatoriosRepository {
   }
 
   @override
-  Uri? urlDownload(RelatorioGerado relatorio) => null; // sem arquivo real no mock
+  Uri? urlDownload(RelatorioGerado relatorio) =>
+      null; // sem arquivo real no mock
 }

@@ -1,13 +1,16 @@
+import '../models/filtros.dart';
 import '../core/config.dart';
 import '../models/relatorios_data.dart';
 import 'api_relatorios_repository.dart';
 import 'mock_relatorios_repository.dart';
 
 abstract class RelatoriosRepository {
-  Future<RelatoriosData> carregar();
+  Future<RelatoriosData> carregar(
+      [FiltrosDashboard filtros = const FiltrosDashboard()]);
 
   /// Pede ao back para gerar um relatório e devolve o documento criado.
-  Future<RelatorioGerado> gerar(String tipoId);
+  Future<RelatorioGerado> gerar(String tipoId,
+      [FiltrosDashboard filtros = const FiltrosDashboard()]);
 
   /// Link de download do documento. null = sem download (modo mock).
   Uri? urlDownload(RelatorioGerado relatorio);

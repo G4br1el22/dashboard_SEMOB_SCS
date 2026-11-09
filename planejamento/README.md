@@ -18,7 +18,7 @@ Leia o [roteiro completo com os cinco prompts](ROTEIRO_SEQUENCIAL_IAS_SEMOB.md).
 
 ## Estado atual
 
-Somente o planejamento está preparado. Nenhuma das cinco etapas de implementação foi concluída. A conexão ao Atlas e o fluxo completo do dashboard ainda precisam ser validados. Os cinco testes do importador passaram durante a preparação da máquina, o que não valida a aplicação inteira.
+Atualização 08/11/2026: o pedido atual autorizou a implementação integrada das cinco etapas sem commits. API, Flutter, relatórios e documentação foram implementados e verificados com base sintética explícita. A leitura real do Atlas, a conciliação de km/viagens e a jornada web/exportação foram concluídas após configuração pelo usuário. Consulte PASSAGEM.md e RESULTADOS_TESTES.md; não trate os registros antigos de planejamento como descrição do código atual.
 
 ## Passagem e issues
 

@@ -42,21 +42,27 @@ class StatCard extends StatelessWidget {
                 Container(
                   width: 36,
                   height: 36,
-                  decoration:
-                      BoxDecoration(color: const Color(0xFF16253F), borderRadius: BorderRadius.circular(8)),
+                  decoration: BoxDecoration(
+                      color: const Color(0xFF16253F),
+                      borderRadius: BorderRadius.circular(8)),
                   child: Icon(icone, size: 18, color: AppColors.pagantes),
                 ),
                 const SizedBox(width: 12),
               ],
               if (cor != null) ...[
-                Container(width: 8, height: 8, decoration: BoxDecoration(color: cor, shape: BoxShape.circle)),
+                Container(
+                    width: 8,
+                    height: 8,
+                    decoration:
+                        BoxDecoration(color: cor, shape: BoxShape.circle)),
                 const SizedBox(width: 8),
               ],
               Expanded(
                 child: Text(titulo,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 13.5, color: Color(0xFFD5DEEC))),
+                    style: const TextStyle(
+                        fontSize: 13.5, color: Color(0xFFD5DEEC))),
               ),
             ],
           ),
@@ -70,7 +76,8 @@ class StatCard extends StatelessWidget {
           Text(legenda,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 11.5, color: AppColors.textMuted)),
+              style:
+                  const TextStyle(fontSize: 11.5, color: AppColors.textMuted)),
         ],
       ),
     );

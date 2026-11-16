@@ -18,5 +18,6 @@ abstract class PassageirosRepository {
 }
 
 /// Escolhe mock ou API conforme --dart-define=USE_MOCK (padrão: mock).
-PassageirosRepository criarPassageirosRepository() =>
-    AppConfig.usarMock ? MockPassageirosRepository() : ApiPassageirosRepository();
+PassageirosRepository criarPassageirosRepository() => AppConfig.usarMock
+    ? MockPassageirosRepository()
+    : ApiPassageirosRepository();

@@ -1,11 +1,11 @@
 {
-    "name": "dashboard_transporte",
-    "short_name": "dashboard_transporte",
+    "name": "SEMOB SCS",
+    "short_name": "SEMOB SCS",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0A1424",
+    "theme_color": "#0A1424",
+    "description": "Indicadores operacionais de transporte",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -38,7 +38,8 @@ class MockPassageirosRepository implements PassageirosRepository {
   // Variação fictícia conforme comparação escolhida
   double? _variacao(FiltrosDashboard f, bool pagantes) {
     final i = f.periodo.index;
-    final base = pagantes ? [3.1, 2.4, 1.9, 4.2, 2.8][i] : [5.8, 4.1, 3.5, 6.3, 5.0][i];
+    final base =
+        pagantes ? [3.1, 2.4, 1.9, 4.2, 2.8][i] : [5.8, 4.1, 3.5, 6.3, 5.0][i];
     return switch (f.comparacao) {
       Comparacao.anoAnterior => base,
       Comparacao.periodoAnterior => -base * 0.6,
@@ -47,7 +48,18 @@ class MockPassageirosRepository implements PassageirosRepository {
   }
 
   PassageirosData _porHora(FiltrosDashboard f, DateTime dia) {
-    const rotulos = ['04h', '06h', '08h', '10h', '12h', '14h', '16h', '18h', '20h', '22h'];
+    const rotulos = [
+      '04h',
+      '06h',
+      '08h',
+      '10h',
+      '12h',
+      '14h',
+      '16h',
+      '18h',
+      '20h',
+      '22h'
+    ];
     const pag = [1280, 5300, 8000, 4400, 5100, 4000, 4800, 6900, 2100, 500];
     const nao = [250, 1500, 3660, 1700, 2000, 1500, 1800, 2400, 800, 300];
     const via = [60, 140, 190, 120, 130, 110, 125, 160, 80, 40];
@@ -74,11 +86,14 @@ class MockPassageirosRepository implements PassageirosRepository {
     while (!d.isAfter(fim) && guarda++ < 120) {
       final fimDeSemana = d.weekday >= 6;
       if (!(f.apenasDiasUteis && fimDeSemana)) {
-        final fatorSemana = d.weekday == 6 ? 0.55 : (d.weekday == 7 ? 0.35 : 1.0);
-        final ruido = 0.92 + 0.16 * (sin(d.difference(DateTime(2026)).inDays * 1.7) + 1) / 2;
+        final fatorSemana =
+            d.weekday == 6 ? 0.55 : (d.weekday == 7 ? 0.35 : 1.0);
+        final ruido = 0.92 +
+            0.16 * (sin(d.difference(DateTime(2026)).inDays * 1.7) + 1) / 2;
         final pag = (42000 * fatorSemana * ruido).roundToDouble();
         serie.add(PontoDemanda(
-          rotulo: '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}',
+          rotulo:
+              '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}',
           pagantes: pag,
           naoPagantes: (pag * 0.375 * (1.05 - ruido * 0.05)).roundToDouble(),
           viagens: (pag / 260).roundToDouble(),
@@ -87,8 +102,8 @@ class MockPassageirosRepository implements PassageirosRepository {
       d = DateTime(d.year, d.month, d.day + 1);
     }
     return _montar(f, inicio, fim, Granularidade.dia, serie,
-        sparkPag: serie.map((p) => p.pagantes).toList(),
-        sparkNao: serie.map((p) => p.naoPagantes).toList());
+        sparkPag: serie.map((p) => p.pagantes!).toList(),
+        sparkNao: serie.map((p) => p.naoPagantes!).toList());
   }
 
   PassageirosData _montar(
@@ -100,8 +115,8 @@ class MockPassageirosRepository implements PassageirosRepository {
     required List<double> sparkPag,
     required List<double> sparkNao,
   }) {
-    final totPag = serie.fold<double>(0, (a, p) => a + p.pagantes);
-    final totNao = serie.fold<double>(0, (a, p) => a + p.naoPagantes);
+    final totPag = serie.fold<double>(0, (a, p) => a + p.pagantes!);
+    final totNao = serie.fold<double>(0, (a, p) => a + p.naoPagantes!);
     return PassageirosData(
       dataInicio: inicio,
       dataFim: fim,

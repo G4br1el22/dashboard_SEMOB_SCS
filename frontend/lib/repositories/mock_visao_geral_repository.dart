@@ -13,9 +13,10 @@ class MockVisaoGeralRepository implements VisaoGeralRepository {
   Future<VisaoGeralData> carregar(FiltrosDashboard f) async {
     final b = await _base.carregar(f);
 
-    final viagens = (b.serie.fold<double>(0, (a, p) => a + p.viagens) * 1.1117).roundToDouble();
+    final viagens = (b.serie.fold<double>(0, (a, p) => a + p.viagens!) * 1.1117)
+        .roundToDouble();
     final km = (viagens * 14.346).roundToDouble();
-    final receita = (b.pagantes.valor * 4.4252).roundToDouble();
+    final receita = (b.pagantes.valor! * 4.4252).roundToDouble();
     final custo = (km * 11.6341).roundToDouble();
 
     final i = f.periodo.index;
@@ -25,27 +26,32 @@ class MockVisaoGeralRepository implements VisaoGeralRepository {
           Comparacao.nenhuma => null,
         };
 
-    final sparkViagens = b.serie.map((p) => p.viagens).toList();
+    final sparkViagens = b.serie.map((p) => p.viagens!).toList();
 
     // Série financeira: receita acompanha os pagantes; custo é mais "achatado".
-    final somaPag = b.serie.fold<double>(0, (a, p) => a + p.pagantes);
-    final somaVia = b.serie.fold<double>(0, (a, p) => a + p.viagens);
+    final somaPag = b.serie.fold<double>(0, (a, p) => a + p.pagantes!);
+    final somaVia = b.serie.fold<double>(0, (a, p) => a + p.viagens!);
     final n = b.serie.length;
     final financeiro = [
       for (final p in b.serie)
         PontoFinanceiro(
           rotulo: p.rotulo,
-          receita: somaPag == 0 ? 0 : (receita * p.pagantes / somaPag).roundToDouble(),
+          receita: somaPag == 0
+              ? 0
+              : (receita * p.pagantes! / somaPag).roundToDouble(),
           custo: n == 0
               ? 0
-              : (custo * (0.5 * (somaVia == 0 ? 0 : p.viagens / somaVia) + 0.5 / n)).roundToDouble(),
+              : (custo *
+                      (0.5 * (somaVia == 0 ? 0 : p.viagens! / somaVia) +
+                          0.5 / n))
+                  .roundToDouble(),
         ),
     ];
 
     // Tabela por linha: valores do mockup escalados pelo volume do período.
-    final fator = b.pagantes.valor / 42380;
-    LinhaDesempenho l(String cod, String nome, num km, num via, num pag, num nao, double oc, double pont,
-            StatusLinha st) =>
+    final fator = b.pagantes.valor! / 42380;
+    LinhaDesempenho l(String cod, String nome, num km, num via, num pag,
+            num nao, double oc, double pont, StatusLinha st) =>
         LinhaDesempenho(
           codigo: cod,
           nome: nome,
@@ -58,12 +64,18 @@ class MockVisaoGeralRepository implements VisaoGeralRepository {
           status: st,
         );
     final linhas = [
-      l('201', 'Terminal SCS ↔ Centro', 3120, 214, 8420, 2980, 78, 94, StatusLinha.normal),
-      l('312', 'Fundação ↔ Prosperidade', 2680, 188, 6210, 2410, 72, 88, StatusLinha.normal),
-      l('405', 'Santa Paula ↔ Barcelona', 2410, 172, 5980, 3120, 84, 71, StatusLinha.atencao),
-      l('118', 'Mauá ↔ Oswaldo Cruz', 1980, 146, 4310, 1890, 61, 96, StatusLinha.normal),
-      l('527', 'Nova Gerty ↔ Terminal', 2240, 158, 3120, 2680, 58, 63, StatusLinha.critico),
-      l('233', 'Cerâmica ↔ Boa Vista', 1870, 138, 4980, 1420, 69, 91, StatusLinha.normal),
+      l('201', 'Terminal SCS ↔ Centro', 3120, 214, 8420, 2980, 78, 94,
+          StatusLinha.normal),
+      l('312', 'Fundação ↔ Prosperidade', 2680, 188, 6210, 2410, 72, 88,
+          StatusLinha.normal),
+      l('405', 'Santa Paula ↔ Barcelona', 2410, 172, 5980, 3120, 84, 71,
+          StatusLinha.atencao),
+      l('118', 'Mauá ↔ Oswaldo Cruz', 1980, 146, 4310, 1890, 61, 96,
+          StatusLinha.normal),
+      l('527', 'Nova Gerty ↔ Terminal', 2240, 158, 3120, 2680, 58, 63,
+          StatusLinha.critico),
+      l('233', 'Cerâmica ↔ Boa Vista', 1870, 138, 4980, 1420, 69, 91,
+          StatusLinha.normal),
     ];
 
     return VisaoGeralData(

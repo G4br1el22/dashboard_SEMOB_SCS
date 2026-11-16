@@ -1,3 +1,4 @@
+import '../models/json_values.dart';
 import 'package:flutter/material.dart';
 
 import '../core/format.dart';
@@ -15,6 +16,7 @@ import 'top_header.dart';
 ///    estreito = empilhado com rolagem (Passageiros).
 class TelaComFiltros<T> extends StatefulWidget {
   final String titulo;
+  final DatasetInfo Function(T)? info;
   final Future<T> Function(FiltrosDashboard filtros) carregar;
   final (DateTime, DateTime) Function(T dados) intervalo;
 
@@ -28,6 +30,7 @@ class TelaComFiltros<T> extends StatefulWidget {
   const TelaComFiltros({
     super.key,
     required this.titulo,
+    this.info,
     required this.carregar,
     required this.intervalo,
     this.corpoRolavel,
@@ -35,7 +38,8 @@ class TelaComFiltros<T> extends StatefulWidget {
     this.corpoEmpilhado,
     this.alturaMinimaLargo = 640,
   }) : assert(
-          corpoRolavel != null || (corpoLargo != null && corpoEmpilhado != null),
+          corpoRolavel != null ||
+              (corpoLargo != null && corpoEmpilhado != null),
           'Informe corpoRolavel OU (corpoLargo e corpoEmpilhado)',
         );
 
@@ -63,6 +67,7 @@ class _TelaComFiltrosState<T> extends State<TelaComFiltros<T>> {
     final id = ++_requisicao;
     setState(() {
       _carregando = true;
+      _data = null;
       _erro = null;
     });
     try {
@@ -100,7 +105,7 @@ class _TelaComFiltrosState<T> extends State<TelaComFiltros<T>> {
     }
     final r = await showDateRangePicker(
       context: context,
-      firstDate: DateTime(2024, 1, 1),
+      firstDate: DateTime(2000, 1, 1),
       lastDate: DateTime(hoje.year, hoje.month, hoje.day),
       initialDateRange: atual,
       locale: const Locale('pt', 'BR'),
@@ -124,6 +129,8 @@ class _TelaComFiltrosState<T> extends State<TelaComFiltros<T>> {
 
     final header = TopHeader(
       titulo: widget.titulo,
+      onLinha: (v) =>
+          _aplicar(_filtros.copyWith(linha: v, limparLinha: v == null)),
       subtitulo: subtitulo,
       anoReferencia: ano,
       filtros: _filtros,
@@ -139,7 +146,8 @@ class _TelaComFiltrosState<T> extends State<TelaComFiltros<T>> {
       if (widget.corpoRolavel != null) {
         return _layoutRolavel(header, pad, larguraUtil >= 900);
       }
-      final largo = larguraUtil >= 900 && c.maxHeight >= widget.alturaMinimaLargo;
+      final largo =
+          larguraUtil >= 900 && c.maxHeight >= widget.alturaMinimaLargo;
       return Padding(
         padding: EdgeInsets.fromLTRB(pad, 24, pad, 16),
         child: largo ? _layoutLargo(header) : _layoutEmpilhado(header),
@@ -165,7 +173,7 @@ class _TelaComFiltrosState<T> extends State<TelaComFiltros<T>> {
       children: [
         Padding(
           padding: EdgeInsets.fromLTRB(pad, 24, pad, 0),
-          child: Column(children: [header, _barraCarregando()]),
+          child: Column(children: [header, _notice(), _barraCarregando()]),
         ),
         Expanded(
           child: SingleChildScrollView(
@@ -191,6 +199,7 @@ class _TelaComFiltrosState<T> extends State<TelaComFiltros<T>> {
     return Column(
       children: [
         header,
+        _notice(),
         _barraCarregando(),
         const SizedBox(height: 22),
         Expanded(child: _estado(widget.corpoLargo!)),
@@ -207,6 +216,7 @@ class _TelaComFiltrosState<T> extends State<TelaComFiltros<T>> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           header,
+          _notice(),
           _barraCarregando(),
           const SizedBox(height: 22),
           if (d == null || _erro != null)
@@ -220,13 +230,29 @@ class _TelaComFiltrosState<T> extends State<TelaComFiltros<T>> {
     );
   }
 
+  Widget _notice() {
+    final d = _data;
+    if (d == null || _erro != null) return const SizedBox.shrink();
+    final info = widget.info?.call(d);
+    if (info == null) return const SizedBox.shrink();
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Text(
+          info.semDados
+              ? 'Sem dados para o período selecionado.'
+              : info.avisos.join(' '),
+          style: const TextStyle(color: AppColors.textMuted, fontSize: 11),
+        ));
+  }
+
   Widget _estado(Widget Function(T) builder) {
     if (_erro != null) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cloud_off_outlined, size: 36, color: AppColors.textMuted),
+            const Icon(Icons.cloud_off_outlined,
+                size: 36, color: AppColors.textMuted),
             const SizedBox(height: 10),
             Text('$_erro', style: const TextStyle(color: AppColors.textMuted)),
             const SizedBox(height: 14),

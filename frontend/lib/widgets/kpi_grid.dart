@@ -20,7 +20,8 @@ class KpiGrid extends StatelessWidget {
         runSpacing: gap,
         children: [
           for (var i = 0; i < kpis.length; i++)
-            SizedBox(width: largura, child: KpiCard(kpi: kpis[i], icone: icones[i])),
+            SizedBox(
+                width: largura, child: KpiCard(kpi: kpis[i], icone: icones[i])),
         ],
       );
     });

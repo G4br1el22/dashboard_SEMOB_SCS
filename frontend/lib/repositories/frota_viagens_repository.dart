@@ -9,5 +9,6 @@ abstract class FrotaViagensRepository {
 }
 
 /// Escolhe mock ou API conforme --dart-define=USE_MOCK (padrão: mock).
-FrotaViagensRepository criarFrotaViagensRepository() =>
-    AppConfig.usarMock ? MockFrotaViagensRepository() : ApiFrotaViagensRepository();
+FrotaViagensRepository criarFrotaViagensRepository() => AppConfig.usarMock
+    ? MockFrotaViagensRepository()
+    : ApiFrotaViagensRepository();

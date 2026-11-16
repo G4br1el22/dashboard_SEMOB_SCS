@@ -23,6 +23,7 @@ class FrotaViagensScreen extends StatelessWidget {
       titulo: 'Frota e Viagens',
       carregar: repo.carregar,
       intervalo: (d) => (d.dataInicio, d.dataFim),
+      info: (d) => d.info,
       corpoRolavel: _corpo,
     );
   }
@@ -39,13 +40,13 @@ class FrotaViagensScreen extends StatelessWidget {
               icone: Icons.directions_bus_outlined,
               titulo: 'Frota total',
               valor: fmtInt(f.total),
-              legenda: 'veículos cadastrados',
+              legenda: 'cadastro não disponível',
             ),
             StatCard(
               icone: Icons.check_circle_outline,
               titulo: 'Em operação',
               valor: fmtInt(f.emOperacao),
-              legenda: '${fmtPct(f.pctOperacao)} da frota',
+              legenda: 'máximo diário registrado',
             ),
             StatCard(
               icone: Icons.build_outlined,
@@ -57,7 +58,8 @@ class FrotaViagensScreen extends StatelessWidget {
               icone: Icons.timer_outlined,
               titulo: 'Idade média',
               valor: '${fmtDecimal(f.idadeMedia)} anos',
-              legenda: 'meta: até ${fmtDecimal(f.metaIdade).replaceAll(',0', '')} anos',
+              legenda:
+                  'meta: até ${fmtDecimal(f.metaIdade).replaceAll(',0', '')} anos',
             ),
           ],
         ),
@@ -67,9 +69,15 @@ class FrotaViagensScreen extends StatelessWidget {
           icones: const [Icons.speed, Icons.directions_bus_outlined],
         ),
         const SizedBox(height: 22),
-        SizedBox(height: 400, child: BarChartDemanda(pontos: d.serie, granularidade: d.granularidade)),
+        SizedBox(
+            height: 400,
+            child: BarChartDemanda(
+                pontos: d.serie,
+                granularidade: d.granularidade,
+                apenasViagens: true)),
         const SizedBox(height: 22),
-        TabelaLinhas(linhas: d.linhas, diario: d.granularidade == Granularidade.hora),
+        TabelaLinhas(
+            linhas: d.linhas, diario: d.granularidade == Granularidade.hora),
       ],
     );
   }

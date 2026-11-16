@@ -1,14 +1,7 @@
-# Passagem atual
+# Passagem da versao compartilhavel
 
-- Etapa: 0 — planejamento e preparação das instruções.
-- Próximo integrante: Guilherme (Gnune2), etapa 1.
-- Branch de planejamento: feat/finalizacao-dashboard-semob.
-- Commit de código inspecionado: d9bcc17ae2a0f7d8e4fd94ae756fc8ac6fc9f0ec.
-- Preparado: roteiro sequencial, prompts por integrante, inventário de fontes, orientação AGENTS.md e corpos das seis issues.
-- Alterações da preparação atual: documentação e utilitário de publicação de issues; nenhuma implementação da aplicação.
-- Verificação anterior: cinco testes do importador passaram. Conexão ao Atlas e build/integração Flutter não verificados.
-- Pendências: configurar/testar leitura segura do MongoDB; localizar enunciado/rubrica/prazo; resolver acesso ao Drive; cumprir as etapas do roteiro.
-- Próxima ação: Guilherme lê o roteiro e executa a etapa 1; deixa registro em planejamento/passagens/ETAPA-01.md e atualiza esta passagem.
-- Publicação de issues: consultar planejamento/issues/REGISTRO.json quando existir. Sem registro/API confirmando, não presumir que as issues foram criadas.
+Base: 43101de49066f5dc1ead4732e013196204aac607. Pacotes por modulo, com arquivos distintos. Guilherme: dados/configuracao; Isabela: requisitos/modelos; Gabriel: API/calculos; Rebecca: frontend; Larissa: relatorios/validacao/entrega.
 
-O histórico de cada entrega deve ser preservado em planejamento/passagens/.
+Implementacao preparada com assistencia de IA na sessao de Guilherme. Os integrantes devem revisar os patches e publicar com a propria conta, preservando autoria das mudancas anteriores. Os commits registram revisao/publicacao, sem simular datas ou desenvolvimento individual que nao ocorreu.
+
+Os modulos possuem dependencias: somente a integracao das cinco partes deve ser tratada como produto executavel completo. Verificar o manifesto e executar testes/build antes do merge. Dados reais, credenciais, logs, builds e relatorios ficam fora dos pacotes.

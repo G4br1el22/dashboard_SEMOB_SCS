@@ -3,8 +3,9 @@ enum FormatoRelatorio { pdf, xlsx }
 extension FormatoRelatorioX on FormatoRelatorio {
   String get rotulo => this == FormatoRelatorio.pdf ? 'PDF' : 'XLSX';
 
-  static FormatoRelatorio doJson(String? v) =>
-      (v ?? '').toLowerCase() == 'xlsx' ? FormatoRelatorio.xlsx : FormatoRelatorio.pdf;
+  static FormatoRelatorio doJson(String? v) => (v ?? '').toLowerCase() == 'xlsx'
+      ? FormatoRelatorio.xlsx
+      : FormatoRelatorio.pdf;
 }
 
 /// Um tipo de relatório que o usuário pode gerar (os 4 cartões).
@@ -55,20 +56,29 @@ class RelatorioGerado {
 }
 
 class RelatoriosData {
-  final DateTime sincronizadoEm;
+  final DateTime? sincronizadoEm;
+  final DateTime? dataInicio;
+  final DateTime? dataFim;
   final List<RelatorioTipo> tipos;
   final List<RelatorioGerado> recentes;
 
   const RelatoriosData({
     required this.sincronizadoEm,
+    this.dataInicio,
+    this.dataFim,
     required this.tipos,
     required this.recentes,
   });
 
   /// Veja o contrato completo em API_CONTRATO.md
   factory RelatoriosData.fromJson(Map<String, dynamic> j) => RelatoriosData(
-        sincronizadoEm: DateTime.parse(j['sincronizado_em'] as String).toLocal(),
-        tipos: (j['tipos'] as List).map((e) => RelatorioTipo.fromJson(e)).toList(),
-        recentes: (j['recentes'] as List).map((e) => RelatorioGerado.fromJson(e)).toList(),
+        sincronizadoEm: null,
+        dataInicio: DateTime.parse(j['data_inicio']),
+        dataFim: DateTime.parse(j['data_fim']),
+        tipos:
+            (j['tipos'] as List).map((e) => RelatorioTipo.fromJson(e)).toList(),
+        recentes: (j['recentes'] as List)
+            .map((e) => RelatorioGerado.fromJson(e))
+            .toList(),
       );
 }

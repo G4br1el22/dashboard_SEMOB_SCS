@@ -1,104 +1,33 @@
-# 📊 Dashboard de Operação de Transporte (TTI206)
+# Dashboard SEMOB SCS
 
-> Painel interativo para monitoramento operacional e financeiro do sistema de transporte público local, desenvolvido no âmbito do **Projeto Integrador Interdisciplinar (TTI206 - 2026/2)**.
+Flutter web e FastAPI para indicadores de transporte. Inclui filtros de data/linha, tratamento de dados ausentes e exportacao PDF/XLSX. Implementacao preparada com assistencia de IA na sessao de Guilherme; os integrantes revisam e publicam os modulos atribuidos pelo plano. Isso nao implica autoria exclusiva nem homologa regras com SEMOB/professor.
 
----
+## Executar
 
-## 🎯 Sobre o Projeto
+Requisitos: Windows, Python 3.13 e Git. Execute Instalar SEMOB.cmd para instalar dependencias, analisar, testar e gerar o build. Flutter validado: 3.47.9 / Dart 3.13.7. O manifesto esta em frontend/.
 
-O objetivo do projeto é substituir o envio manual de relatórios estáticos por e-mail por uma **plataforma interativa de inteligência de dados**, permitindo acompanhar a operação em tempo real nas visões **Diária, Semanal e Mensal**.
+Depois abra Demonstracao SEMOB.cmd: http://127.0.0.1:8766. A base e sintetica e identificada; os relatorios sao arquivos reais locais.
 
-### 💡 Benefícios
-* **Gestão Facilitada:** Visão consolidada da operação de transporte em uma única interface.
-* **Detecção de Anomalias:** Identificação ágil de desvios operacionais e financeiros.
-* **Apresentação Executiva:** Dados estruturados para relatórios diretos ao Secretário e Prefeito.
+Para banco proprio, abra Configurar MongoDB.cmd e informe seu usuario, senha, hostname do cluster e banco. Nada disso e distribuido neste repositorio. Use usuario com leitura de semob.dados_consulta e IP atual autorizado no Atlas. O formulario salva backend/.env ignorado somente apos validar a leitura. Iniciar SEMOB.cmd abre http://127.0.0.1:8765. Parar SEMOB.cmd encerra somente os processos do projeto.
 
----
+## Regras e limites
 
-## 📈 Indicadores Monitorados (KPIs)
+A API so le dados_consulta, projetando campos operacionais permitidos e exigindo registro_diario e fonte_preferencial. Quilometragem/viagens selecionam uma familia por dia, sem somar granularidades sobrepostas. Viagens usam nrViagensRealiz no resumo e nrViagens por linha. Passageiros pagantes usam Catraca + Antecipados; nao pagantes usam o campo homonimo. Vendas de creditos nao equivalem a receita tarifaria.
 
-* **Quilometragem executada**
-* **Total de viagens realizadas**
-* **Volume de passageiros pagantes**
-* **Volume de passageiros não pagantes (Gratuidades/Isenções)**
-* **Métricas financeiras consolidadas**
+Ausencias usam null, totais parciais informam cobertura e percentuais incompletos sao omitidos. Sem fonte homologada nao ha custo, receita tarifaria, pontualidade, ocupacao ou cadastro de frota. O escopo e local, sem login de equipe, e-mail automatico, coleta automatica Smart Data ou publicacao publica.
 
----
+PDF e XLSX usam os mesmos filtros/calculos da consulta e ficam em backend/local/reports, separados por fonte. Credenciais, dados reais, logs, relatorios e builds nao sao versionados. O importador manual existente tem modo --apply que escreve no Atlas e nao e executado pela aplicacao.
 
-## ⚡ Principal Desafio & Integração
+## Verificacao
 
-O foco técnico do projeto está na **automação e consumo de dados brutos** do sistema da empresa consolidadora (**Smart Data**), eliminando o fluxo legados de relatórios anexados em e-mails.
+```powershell
+.venv/Scripts/python.exe -m pytest -q
+.venv/Scripts/python.exe -m unittest discover -s backend/tools -p test_import_semob.py
+cd frontend
+flutter analyze
+flutter test
+```
 
----
+O pacote integrado foi verificado localmente: 29 testes backend/configuracao, 5 importador e 5 Flutter, analise e build. Testes automatizados usam fixtures sinteticas. Evidencias privadas do Atlas nao sao distribuidas; cada ambiente real precisa ser validado pelo seu responsavel.
 
-## 🛠️ Tecnologias Utilizadas
-
-* **Front-end / Dashboard: Dart** 
-* **Back-end / Tratamento de Dados: Python** 
-* **Banco de Dados:** MongoDB
-
----
-
-## Integrantes
-|Alunos                               | R.A          | Github              |Cargo                              |
-|-------------------------------------|--------------|---------------------|-----------------------------------|
-| Isabela Simodo Nakai                     | 25.11733-4   | @N4k4i     | Dev. e Documentação               |
-| Rebecca Miki Uema               | 25.01550-4   | @rebeccauema       | Dev. e Documentação               |
-| Gabriel Medeiros Araujo             | 25.11742-5   | @G4br1el22          | Dev. e Documentação               |
-| Larissa Barbosa Oliveira                | 25.11765-6   | @larringe              | Dev. e Documentação               |
-| Guilherme Nunes Furtado          | 25.00014-2   | @Gnune2             | Dev. e Documentação               |
-
-
-```text
-
-##Arquitetura do repositório
-/dashboard-operacao-transporte
-│
-├── .gitignore                  # Arquivos ignorados pelo git (node_modules, .env, build/)
-├── README.md                   # Documentação principal do repositório
-│
-├── /backend                    # API em Python (FastAPI/Flask) e Integração MongoDB
-│   ├── requirements.txt        # Dependências (fastapi, uvicorn, pymongo, pandas)
-│   ├── main.py                 # Ponto de entrada da API
-│   ├── /config
-│   │   └── database.py         # Conexão com o MongoDB (PyMongo ou Motor)
-│   ├── /models
-│   │   └── schemas.py          # Estruturas de dados esperadas/validadas (Pydantic se usar FastAPI)
-│   ├── /routes
-│   │   ├── kpis.py             # Rota para os 6 cartões superiores (Quilometragem, Viagens, Receita, etc.)
-│   │   ├── graficos.py         # Rota para alimentar o gráfico de barras (Demanda) e rosca (Composição)
-│   │   └── filtros.py          # Rota para lidar com a alternância "Diária / Semanal / Mensal"
-│   └── /services
-│       └── smart_data_sync.py  # Lógica para puxar e tratar os dados brutos para inserir no MongoDB
-│
-└── /frontend                   # Aplicação Flutter / Dart
-    ├── pubspec.yaml            # Dependências (http/dio, fl_chart, provider/riverpod)
-    ├── /lib
-    │   ├── main.dart           # Ponto de entrada do app Flutter
-    │   ├── /core
-    │   │   ├── theme.dart      # Definição do tema escuro (Dark Mode) visto no mockup
-    │   │   └── api_client.dart # Configuração do cliente HTTP para conectar com o Python
-    │   ├── /models
-    │   │   ├── kpi_model.dart  # Molde para os dados dos cartões (valor atual e variação percentual)
-    │   │   └── chart_data.dart # Molde para os eixos X e Y dos gráficos
-    │   ├── /screens
-    │   │   ├── layout_base.dart       # Estrutura principal contendo a Sidebar e a Topbar
-    │   │   ├── visao_geral.dart       # A tela mostrada na 'image 2.png'
-    │   │   ├── frota_viagens.dart     # (Demais telas baseadas no menu lateral)
-    │   │   ├── passageiros.dart
-    │   │   ├── financeiro.dart
-    │   │   ├── linhas.dart
-    │   │   ├── anomalias.dart
-    │   │   └── relatorios.dart
-    │   └── /widgets
-    │       ├── sidebar_menu.dart      # Menu lateral de navegação
-    │       ├── top_header.dart        # Barra superior com botões de filtro temporal, busca e exportação
-    │       ├── kpi_card.dart          # Componente reutilizável para os 6 blocos de indicadores
-    │       ├── bar_chart_demanda.dart # Componente do gráfico de barras empilhadas (Demanda de passageiros)
-    │       └── donut_chart_comp.dart  # Componente do gráfico de rosca (Composição de demanda)
-    └── /assets
-        ├── /icons              # Ícones customizados da sidebar e dos cards
-        └── /fonts              # Fontes específicas utilizadas no design
-
-
-'''
+Contrato em API_CONTRATO.md. Documentacao em planejamento/. As branches individuais possuem dependencias e a validacao completa e realizada apos integracao das cinco partes.

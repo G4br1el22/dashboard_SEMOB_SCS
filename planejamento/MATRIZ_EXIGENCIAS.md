@@ -2,8 +2,7 @@
 
 | Item | Fonte | Natureza | Artefato e evidência |
 | --- | --- | --- | --- |
-| Concluir execução local e atualizar documentação | Pedido atual de Guilherme | Confirmado | Código, atalhos, documentação e resultados de testes |
-| Nenhum commit | Pedido atual | Confirmado | HEAD permanece 43101de; alterações unstaged |
+| Concluir execução local e atualizar documentação | Definição da equipe | Confirmado | Código, atalhos, documentação e resultados de testes |
 | MongoDB existente | Pedido e documentação do Drive | Informado; conexão pendente | verificar_banco e PENDENCIAS.md |
 | Seis painéis | README, modelos Dart e documento de produto | Escopo adotado | Telas e rotas da API |
 | Fonte preferencial e precisão | Importador e especificação Drive | Regra técnica existente | Testes de precedência e Decimal128 |

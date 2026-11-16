@@ -1,0 +1,41 @@
+{
+  "repository": "G4br1el22/dashboard_SEMOB_SCS",
+  "issues": [
+    {
+      "key": "central",
+      "title": "[SEMOB][IA] Coordenação e passagens das cinco etapas",
+      "file": "00-coordenacao.md",
+      "stage": 0
+    },
+    {
+      "key": "etapa-01",
+      "title": "[SEMOB][IA 1/5] Guilherme (Gnune2) — Base de dados e MongoDB",
+      "file": "01-etapa.md",
+      "stage": 1
+    },
+    {
+      "key": "etapa-02",
+      "title": "[SEMOB][IA 2/5] Isabela — Negócio, requisitos e modelagem",
+      "file": "02-etapa.md",
+      "stage": 2
+    },
+    {
+      "key": "etapa-03",
+      "title": "[SEMOB][IA 3/5] Gabriel — API e indicadores",
+      "file": "03-etapa.md",
+      "stage": 3
+    },
+    {
+      "key": "etapa-04",
+      "title": "[SEMOB][IA 4/5] Rebecca — Frontend Flutter e integração real",
+      "file": "04-etapa.md",
+      "stage": 4
+    },
+    {
+      "key": "etapa-05",
+      "title": "[SEMOB][IA 5/5] Larissa — Relatórios, validação final e apresentação",
+      "file": "05-etapa.md",
+      "stage": 5
+    }
+  ]
+}
